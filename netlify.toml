@@ -1,0 +1,7 @@
+[build]
+  publish = "docs"
+  functions = "netlify/functions"
+[functions]
+  node_bundler = "esbuild"
+# PENTING: GEMINI_API_KEY dan kode akses harus diatur di dashboard Netlify,
+# jangan dimasukkan ke netlify.toml atau file publik.

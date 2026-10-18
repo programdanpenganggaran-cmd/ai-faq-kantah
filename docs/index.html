@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d3257" />
+  <meta name="description" content="Rujukan — Purwarupa AI FAQ Kantor Pertanahan untuk perencanaan, penganggaran, dan regulasi, dikembangkan dalam konteks Biro Perencanaan dan Kerja Sama." />
+  <title>Rujukan | AI FAQ Kantah — Biro Perencanaan dan Kerja Sama</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="config.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="sidebar" id="sidebar" aria-label="Menu aplikasi">
+    <div class="sidebar-top">
+      <div class="side-brand">
+        <div class="r-symbol">R<span>.</span></div>
+        <div><strong>Rujukan<span class="brand-sup"> AI</span></strong><small>FAQ KANTOR PERTANAHAN</small></div>
+      </div>
+      <div class="beta-label"><span class="beta-dot"></span> BETA · UJI COBA MANDIRI</div>
+      <button type="button" class="new-chat" id="newChat"><span class="plus-icon">＋</span><span>Percakapan baru</span><span class="shortcut">Alt + N</span></button>
+      <div class="side-heading">JELAJAH TOPIK</div>
+      <nav class="category-nav" aria-label="Topik pengetahuan">
+        <button type="button" class="category active" data-topic="all"><span class="nav-emoji">✦</span><span>Semua topik</span><span class="nav-count">04</span></button>
+        <button type="button" class="category" data-topic="planning"><span class="nav-emoji">▦</span><span>Perencanaan & anggaran</span></button>
+        <button type="button" class="category" data-topic="cost"><span class="nav-emoji">◈</span><span>SBM, SBK & BAS</span></button>
+        <button type="button" class="category" data-topic="revision"><span class="nav-emoji">⇄</span><span>Revisi anggaran</span></button>
+        <button type="button" class="category" data-topic="execution"><span class="nav-emoji">▤</span><span>Pelaksanaan & pelaporan</span></button>
+      </nav>
+      <div class="side-heading history-heading"><span>RIWAYAT DI PERANGKAT</span><button id="clearHistory" class="text-button" type="button" title="Hapus seluruh histori browser">Hapus</button></div>
+      <div class="history-list" id="historyList"><div class="history-empty">Belum ada percakapan tersimpan.</div></div>
+    </div>
+    <div class="sidebar-bottom"><div class="side-info"><div class="side-info-title"><span>◌</span> Tentang Rujukan</div><p>Asisten pengetahuan untuk uji coba. Jawaban AI belum menjadi pendapat atau keputusan resmi instansi.</p></div><span class="side-copy">© 2026 · Rujukan V2.0</span></div>
+  </aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button id="menuButton" class="icon-control menu-button" type="button" aria-label="Buka menu" aria-expanded="false">☰</button>
+        <div class="ministry-brand"><div class="ministry-logo-wrap"><img id="atrLogo" alt="Logo Kementerian ATR/BPN" /></div><div class="ministry-text"><span class="ministry-kicker">KEMENTERIAN AGRARIA DAN TATA RUANG / BPN</span><strong>Biro Perencanaan dan Kerja Sama</strong></div></div>
+      </div>
+      <div class="topbar-actions"><div class="connection-indicator" id="connectionIndicator"><span class="status-pulse" id="statusPulse"></span><span id="connectionText">Memeriksa koneksi</span></div><button type="button" class="settings-trigger" id="openSettings" aria-label="Buka pengaturan"><span>⚙</span><span class="settings-word">Pengaturan</span></button></div>
+    </header>
+    <section class="workspace">
+      <div class="workspace-grid"></div>
+      <div class="chat-scroll" id="chatScroll">
+        <div class="welcome-area" id="welcomeArea">
+          <div class="welcome-visual"><div class="halo halo-a"></div><div class="halo halo-b"></div><div class="welcome-logo"><span>R<span class="dot">.</span></span></div><span class="sparkle sparkle-a">✦</span><span class="sparkle sparkle-b">✳</span></div>
+          <div class="eyebrow"><span class="eyebrow-line"></span> ASISTEN PENGETAHUAN DIGITAL <span class="eyebrow-line"></span></div>
+          <h1>Halo, ada yang bisa<br /><span>Rujukan</span> bantu hari ini?</h1>
+          <p class="welcome-sub">Ruang tanya jawab yang lebih praktis untuk memahami perencanaan, penganggaran, dan ketentuan terkait di lingkungan Kantor Pertanahan.</p>
+          <div class="welcome-status" id="welcomeStatus">Memeriksa ketersediaan AI...</div>
+          <div class="suggest-label"><span>✧</span> MULAI DENGAN PERTANYAAN</div>
+          <div class="suggestion-grid" id="suggestionGrid">
+            <button type="button" class="suggestion-card" data-topic="planning" data-question="Bagaimana tahapan penyusunan RKA-K/L pada satuan kerja?" ><span class="suggest-icon sand">▦</span><span class="suggest-text"><strong>Penyusunan RKA-K/L</strong><small>Tahapan perencanaan dan anggaran</small></span><span class="suggest-arrow">↗</span></button>
+            <button type="button" class="suggestion-card" data-topic="cost" data-question="Apa perbedaan akun belanja 52 dan 53 dalam penganggaran pemerintah?" ><span class="suggest-icon mint">◈</span><span class="suggest-text"><strong>Klasifikasi akun belanja</strong><small>Perbedaan akun 52 dan 53</small></span><span class="suggest-arrow">↗</span></button>
+            <button type="button" class="suggestion-card" data-topic="revision" data-question="Apa yang perlu diperiksa sebelum mengajukan revisi anggaran?" ><span class="suggest-icon blue">⇄</span><span class="suggest-text"><strong>Revisi anggaran</strong><small>Prosedur dan dokumen pendukung</small></span><span class="suggest-arrow">↗</span></button>
+            <button type="button" class="suggestion-card" data-topic="execution" data-question="Apa saja hal yang perlu diperhatikan dalam monitoring pelaksanaan anggaran satker?" ><span class="suggest-icon lavender">▤</span><span class="suggest-text"><strong>Monitoring & pelaporan</strong><small>Pemantauan kegiatan satuan kerja</small></span><span class="suggest-arrow">↗</span></button>
+          </div>
+        </div>
+        <div class="messages" id="messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+      </div>
+      <div class="input-dock">
+        <div class="context-bar"><span class="context-left"><span class="mini-sparkle">✧</span> <strong>Rujukan AI</strong> · <span id="composerMode">Mode demo lokal</span></span><span class="context-right">Didesain untuk membantu, bukan menggantikan telaah regulasi.</span></div>
+        <form class="composer" id="chatForm"><textarea id="questionInput" rows="1" maxlength="1500" aria-label="Pertanyaan untuk Rujukan" placeholder="Tanyakan tentang perencanaan, penganggaran, atau regulasi..." required></textarea><div class="composer-footer"><div class="input-tools"><span class="input-hint">↵ Enter kirim · Shift + Enter baris baru</span><span id="charCounter" class="char-counter">0/1500</span></div><button class="send-button" type="submit" id="sendButton" aria-label="Kirim pesan"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="m4 12 16-8-5 16-3-7-8-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m12 13 8-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div></form>
+        <div class="footer-note"><span class="gold-dot">●</span> Purwarupa mandiri, bukan kanal resmi atau produk yang telah disahkan ATR/BPN. Jangan masukkan NIK, data pemohon, atau informasi rahasia.</div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="modal-layer hidden" id="settingsModal"><div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsHeading"><div class="modal-header"><div><div class="eyebrow modal-eyebrow">PREFERENSI APLIKASI</div><h2 id="settingsHeading">Pengaturan koneksi AI</h2></div><button class="close-button" id="closeSettings" type="button" aria-label="Tutup pengaturan">✕</button></div><p class="modal-description">Hubungkan website ke Netlify Functions agar dapat bercakap dengan Gemini. API key hanya disimpan di Netlify, tidak di browser.</p><label for="apiUrl">URL endpoint Netlify Functions</label><input id="apiUrl" type="url" placeholder="https://nama-situs.netlify.app/.netlify/functions/chat" autocomplete="url" /><div class="input-help">Masukkan URL fungsi lengkap, berakhiran <code>/.netlify/functions/chat</code>.</div><label for="accessCode">Kode akses uji coba <span>(jika admin mengaktifkan)</span></label><input id="accessCode" type="password" placeholder="Kode akses dari admin" autocomplete="off" /><div class="modal-tip">URL dan kode disimpan hanya selama tab terbuka. Histori percakapan tersimpan secara lokal di browser ini; jangan gunakan perangkat bersama untuk pertanyaan pribadi.</div><div class="modal-actions"><button id="testConnection" class="button-outline" type="button">Uji koneksi</button><button id="saveSettings" class="button-primary" type="button">Simpan & gunakan AI <span>↗</span></button></div><div id="settingsFeedback" class="feedback" role="status"></div></div></div>
+</body>
+</html>
