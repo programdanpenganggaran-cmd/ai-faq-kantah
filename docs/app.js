@@ -30,7 +30,7 @@
     "Bagaimana penanganan sisa belanja 51 yang tidak dapat dialihkan?",
     "Apakah blokir pada anggaran direktif dapat digeser?",
     "Belanja operasional mencakup komponen apa saja?",
-    "Apakah persediaan tinta printer untuk operasional boleh masuk akun yang diusulkan?"
+    "Apakah akun 52811 tepat untuk persediaan tinta pada belanja operasional?"
   ];
   const now = () => new Date().toISOString();
   const uid = () => (globalThis.crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2));
