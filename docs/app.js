@@ -12,6 +12,26 @@
     revision:['Apa yang perlu diperiksa dalam revisi anggaran?', 'Apa perbedaan revisi DIPA dan revisi POK?'],
     execution:['Apa indikator monitoring pelaksanaan anggaran?', 'Bagaimana menyusun laporan realisasi anggaran satker?']
   };
+  const QA_TESTS = [
+    "Apakah sisa anggaran belanja 51 dapat digeser ke belanja 52?",
+    "Apakah revisi antar-PN diperbolehkan?",
+    "Apakah revisi anggaran 51 cukup menjadi kewenangan KPA?",
+    "Bolehkah menggeser anggaran operasional ke nonoperasional atau sebaliknya?",
+    "Bagaimana mekanisme pengurangan target PN?",
+    "Apakah dana PHLN dapat digunakan untuk belanja modal?",
+    "Apa saja persyaratan pengusulan belanja modal?",
+    "Setelah revisi naik unit, kapan SPRA bisa diterbitkan?",
+    "Bagaimana jika batas waktu revisi RPD tiba ketika revisi DJA belum selesai?",
+    "Bagaimana penyesuaian volume non-PN jika komponen awalnya kurang?",
+    "Bagaimana penyelesaian pagu minus pada satker?",
+    "Bagaimana jika sisa anggaran PNBP tidak memiliki kegiatan penampung?",
+    "Bagaimana mengoptimalkan pagu layanan yang bersumber dari PNBP?",
+    "Apakah blokir direktif Presiden dapat ditarik ke Bagian Anggaran Bendahara Umum Negara?",
+    "Bagaimana penanganan sisa belanja 51 yang tidak dapat dialihkan?",
+    "Apakah blokir pada anggaran direktif dapat digeser?",
+    "Belanja operasional mencakup komponen apa saja?",
+    "Apakah persediaan tinta printer untuk operasional boleh masuk akun yang diusulkan?"
+  ];
   const now = () => new Date().toISOString();
   const uid = () => (globalThis.crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2));
   const safeParse = (raw, fallback) => { try { return JSON.parse(raw) ?? fallback; } catch { return fallback; } };
@@ -34,13 +54,49 @@
   function closeMenu(){ $('sidebar').classList.remove('open');$('scrim').hidden=true;$('menuButton').setAttribute('aria-expanded','false'); }
   function renderHistory(){const root=$('historyList');root.replaceChildren();const visible=state.chats.filter(c=>c.messages.length).slice(0,16); if(!visible.length){const p=document.createElement('div');p.className='history-empty';p.textContent='Belum ada percakapan tersimpan.';root.append(p);return;}
     visible.forEach(c => {let b=document.createElement('button');b.type='button';b.className='history-item'+(c.id===state.currentId?' active':'');b.textContent='◷  '+c.title;b.title=c.title;b.addEventListener('click',()=>{state.currentId=c.id;persist();render();closeMenu();});root.append(b);});}
+  function renderRichText(node, content){
+    node.replaceChildren();
+    const raw=String(content||'').slice(0,8000), lines=raw.split(/\r?\n/);
+    lines.forEach((original,i)=>{
+      if(i>0)node.append(document.createElement('br'));
+      let line=original.replace(/^\s*#{1,4}\s+/,'').replace(/^\s*(?:[-*]|\d+[.)])\s+/,'• ');
+      const regex=/(\*\*[^*]{1,320}\*\*|`[^`]{1,180}`|\[[^\]]{1,180}\]\(https:\/\/[^\s)]+\))/g;
+      let last=0,match;
+      while((match=regex.exec(line))!==null){
+        if(match.index>last)node.append(document.createTextNode(line.slice(last,match.index)));
+        const token=match[0];
+        if(token.startsWith('**')){
+          const strong=document.createElement('strong');strong.textContent=token.slice(2,-2);node.append(strong);
+        }else if(token.startsWith('`')){
+          const code=document.createElement('code');code.textContent=token.slice(1,-1);node.append(code);
+        }else{
+          const m=/^\[([^\]]+)\]\((https:\/\/[^\s)]+)\)$/.exec(token);
+          if(m){const link=document.createElement('a');link.textContent=m[1];link.href=m[2];link.target='_blank';link.rel='noopener noreferrer';node.append(link);}
+          else node.append(document.createTextNode(token));
+        }
+        last=regex.lastIndex;
+      }
+      if(last<line.length)node.append(document.createTextNode(line.slice(last)));
+    });
+  }
   function addMessage(role,content,kind='',sources=[]){const wrap=document.createElement('div');wrap.className=`message ${role}`;
     if(role==='assistant'){const avatar=document.createElement('div');avatar.className='bot-avatar';avatar.innerHTML='R<span>.</span>';wrap.append(avatar);}
     const bubble=document.createElement('div');bubble.className='bubble';
     if(role==='assistant'){const label=document.createElement('div');label.className='bubble-label';label.textContent='RUJUKAN  /  '+(kind==='demo'?'MODE DEMO':kind==='error'?'PEMBERITAHUAN':'AI GEMINI');bubble.append(label);}
-    const p=document.createElement('p');p.textContent=content;bubble.append(p);
+    const p=document.createElement('p');renderRichText(p,content);bubble.append(p);
     if(role==='assistant' && kind!=='error'){
       const foot=document.createElement('div');foot.className='message-info'+(Array.isArray(sources)&&sources.length?' good':'');foot.textContent=kind==='demo'?'◌ Respons simulasi offline, bukan jawaban AI.':(Array.isArray(sources)&&sources.length?'✓ Materi rujukan tersedia.':'⚠ Belum berdasarkan indeks peraturan yang diverifikasi.');bubble.append(foot);
+    }
+    if(role==='assistant' && Array.isArray(sources) && sources.length){
+      const refs=document.createElement('div');refs.className='source-panel';
+      const heading=document.createElement('div');heading.className='source-heading';heading.textContent='RUJUKAN DOKUMEN · PERIKSA NASKAH ASLI';refs.append(heading);
+      for(const src of sources.slice(0,4)){
+        if(!src||typeof src.url!=='string'||!src.url.startsWith('https://'))continue;
+        const link=document.createElement('a');link.className='source-link';link.href=src.url;link.target='_blank';link.rel='noopener noreferrer';
+        link.textContent='↗  '+String(src.title||'Dokumen sumber').slice(0,160)+(src.page?' · hlm. '+src.page:'')+(src.section?' · '+src.section:'');
+        refs.append(link);
+      }
+      bubble.append(refs);
     }
     wrap.append(bubble);$('messages').append(wrap);return wrap;}
   function render(){renderHistory();$('messages').replaceChildren();const c=current();const has=c?.messages.length;$('welcomeArea').classList.toggle('hidden',!!has);if(has) c.messages.forEach(m=>addMessage(m.role,m.text,m.kind,m.sources));requestAnimationFrame(()=>{ $chat.scrollTop=has?$chat.scrollHeight:0; });}
@@ -74,6 +130,12 @@
   $('menuButton').addEventListener('click',()=>{const show=!$('sidebar').classList.contains('open');$('sidebar').classList.toggle('open',show);$('scrim').hidden=!show;$('menuButton').setAttribute('aria-expanded',String(show));});
   $('scrim').addEventListener('click',closeMenu);
   $('clearHistory').addEventListener('click',()=>{if(confirm('Hapus semua percakapan yang tersimpan di browser ini?')){state.chats=[];newChat();closeMenu();}});
+  const questionBank=$('questionBank');
+  if(questionBank){QA_TESTS.forEach((q,i)=>{
+    const b=document.createElement('button');b.type='button';b.className='quick-question';
+    b.textContent=String(i+1).padStart(2,'0')+'  '+q;
+    b.addEventListener('click',()=>send(q));questionBank.append(b);
+  });}
   document.querySelectorAll('.category').forEach(x=>x.addEventListener('click',()=>setCategory(x.dataset.topic)));
   document.querySelectorAll('.suggestion-card').forEach(x=>x.addEventListener('click',()=>send(x.dataset.question)));
   $('openSettings').addEventListener('click',openSettings);$('closeSettings').addEventListener('click',closeSettings);$('settingsModal').addEventListener('click',e=>{if(e.target===$('settingsModal'))closeSettings();});
