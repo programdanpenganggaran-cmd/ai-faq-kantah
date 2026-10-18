@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#072d33" />
+  <meta name="description" content="Purwarupa asisten FAQ perencanaan dan penganggaran untuk Kantor Pertanahan. Coba percakapan dan telusuri sumber." />
+  <title>Rujukan — AI FAQ Kantah (Demo)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="config.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <aside class="side" id="sidebar">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">R<span class="brand-dot">.</span></div>
+        <div><strong>Rujukan</strong><span>AI FAQ KANTAH</span></div>
+      </div>
+      <div class="beta-tag">PURWARUPA / NONRESMI</div>
+      <button class="new-chat" id="newChat"><span aria-hidden="true">＋</span> Percakapan baru</button>
+      <div class="side-section-label">AREA PENGETAHUAN</div>
+      <div class="nav-link active"><span class="nav-icon">▧</span> Perencanaan &amp; anggaran</div>
+      <div class="nav-link"><span class="nav-icon">▤</span> SBM / SBK / BAS <small>bertahap</small></div>
+      <div class="nav-link"><span class="nav-icon">◫</span> Revisi &amp; pelaksanaan <small>bertahap</small></div>
+      <div class="side-bottom">
+        <div class="sidebar-note"><div class="small-overline">TENTANG DEMO</div>
+          Percakapan AI hanya aktif setelah backend gratis dihubungkan. Materi hukum harus disetujui sebelum dipublikasikan.
+        </div>
+        <div class="side-footer">Dibuat untuk uji coba mandiri • 2026</div>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="top-left"><button class="icon-btn mobile-menu" id="toggleSidebar" aria-label="Buka menu">☰</button><span class="breadcrumb">Workspace <b>/</b> AI FAQ Kantah</span></div>
+        <div class="top-right"><span class="connection-dot" id="connectionDot"></span><span id="connectionText">Memuat...</span><button class="small-settings" id="openSettings" aria-label="Konfigurasi koneksi">⚙ <span>Pengaturan</span></button></div>
+      </header>
+      <div class="conversation" id="conversation" role="log" aria-live="polite" aria-relevant="additions text">
+        <section class="welcome" id="welcome">
+          <div class="intro-badge"><span>✦</span> ASISTEN PENGETAHUAN — DEMO</div>
+          <div class="hero-mark">R<span>.</span></div>
+          <h1>Selamat datang di <em>Rujukan.</em></h1>
+          <p class="hero-desc">Ruang tanya jawab seputar perencanaan, penganggaran, dan regulasi. Dibangun untuk memudahkan pencarian referensi kerja di Kantor Pertanahan.</p>
+          <div class="status-note" id="modeExplanation"><span class="status-mini">i</span> Memeriksa mode percakapan...</div>
+          <div class="suggest-title">MULAI DARI PERTANYAAN</div>
+          <div class="suggest-grid">
+            <button class="suggest" data-question="Apa saja referensi peraturan yang tersedia saat ini?"><span>▧</span><b>Koleksi regulasi</b><small>Lihat materi yang tersedia di demo</small><span class="arr">↗</span></button>
+            <button class="suggest" data-question="Apa perbedaan akun belanja 52 dan 53 untuk renovasi gedung?"><span>◈</span><b>Klasifikasi belanja</b><small>Bahas klasifikasi akun 52 dan 53</small><span class="arr">↗</span></button>
+            <button class="suggest" data-question="Bagaimana ketentuan SBM dan SBK untuk menyusun RKA-K/L?"><span>◉</span><b>SBM dan SBK</b><small>Tanyakan dasar penganggaran</small><span class="arr">↗</span></button>
+            <button class="suggest" data-question="Bagaimana prosedur revisi anggaran satker?"><span>↗</span><b>Revisi anggaran</b><small>Telusuri referensi terkait revisi</small><span class="arr">↗</span></button>
+          </div>
+        </section>
+        <div id="messages" class="messages"></div>
+      </div>
+      <div class="composer-wrap">
+        <div class="mode-banner" id="modeBanner"></div>
+        <form id="chatForm" class="composer">
+          <textarea id="question" maxlength="1200" rows="1" placeholder="Tanyakan sesuatu tentang perencanaan atau penganggaran..." aria-label="Pertanyaan"></textarea>
+          <div class="composer-bottom"><span class="compose-hint">Enter kirim · Shift+Enter baris baru</span><button type="submit" id="sendButton" class="send" aria-label="Kirim pertanyaan">➤</button></div>
+        </form>
+        <p class="disclaimer">Purwarupa independen, bukan kanal resmi ATR/BPN. Jangan masukkan NIK, data pemohon, atau dokumen rahasia. Verifikasi jawaban dengan naskah peraturan.</p>
+      </div>
+    </main>
+  </div>
+  <div class="modal-backdrop hidden" id="settingsModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="modal-head"><div><div class="small-overline">KONFIGURASI</div><h2 id="settingsTitle">Koneksi AI</h2></div><button class="close-btn" id="closeSettings" aria-label="Tutup">✕</button></div>
+      <p>Website tetap bisa dibuka tanpa server. Agar ada jawaban AI generatif, pasang URL Cloudflare Worker dari konfigurasi proyek.</p>
+      <label for="workerUrl">URL Worker (hanya HTTPS)</label><input id="workerUrl" type="url" placeholder="https://ai-faq-kantah.nama.workers.dev" autocomplete="off" />
+      <label for="accessCode">Kode akses uji coba (jika diaktifkan)</label><input id="accessCode" type="password" placeholder="Kode undangan" autocomplete="off" />
+      <p class="privacy">URL dan kode akses disimpan hanya selama tab ini terbuka. Jangan gunakan kode akses yang sama dengan sandi akun.</p>
+      <div class="modal-actions"><button class="secondary-btn" id="testConnection">Uji koneksi</button><button class="primary-btn" id="saveSettings">Gunakan koneksi</button></div>
+      <div class="modal-feedback" id="settingsFeedback" role="status"></div>
+    </div>
+  </div>
+</body>
+</html>
