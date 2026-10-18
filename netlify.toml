@@ -5,3 +5,7 @@
   node_bundler = "esbuild"
 # PENTING: GEMINI_API_KEY dan kode akses harus diatur di dashboard Netlify,
 # jangan dimasukkan ke netlify.toml atau file publik.
+# Kedua nilai berikut adalah konfigurasi publik (URL situs dan nama model),
+# bukan kredensial. Pertahankan scanning untuk GEMINI_API_KEY dan DEMO_ACCESS_CODE.
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "ALLOWED_ORIGINS,GEMINI_MODEL"
