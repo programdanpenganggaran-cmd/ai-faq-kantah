@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {parseJdihPage,buildObservations} from '../scripts/monitor-jdih.mjs';
 const sample=entry=>'<html><head><title>'+entry.id+' | JDIH Kemenkeu</title></head><body>'
-+'<p>Tipe Dokumen Peraturan Kode '+entry.id.replace(/-/g,' ').replace('PMK ','PMK ')
++'<p>Tipe Dokumen Peraturan Kode PMK 62 TAHUN 2023 '
 +' Judul PMK Kementerian Keuangan Jenis Peraturan Menteri '
 +'Tanggal Berlaku 22 Jun 2026 - s.d. Dicabut Tempat Terbit Jakarta Sumber BNRI '
 +' Riwayat Dokumen (2) 22 Jun 2026 Diubah Terbaru Dokumen ini diubah oleh '
