@@ -16,7 +16,7 @@ export function cleanFaqQuestion(raw){
  return q;
 }
 export const faqQueueStore=()=>getStore({name:'faq-pp-faq-pending',consistency:'strong'});
-export async function queueFaqQuestion(question,{consent=false,enabled=false,store=faqQueueStore()}={}){
+export async function queueFaqQuestion(question,{consent=false,enabled=false,store=null}={}){
  if(!consent||!enabled)return {accepted:false,reason:'OPT_IN_OR_FEATURE_DISABLED'};
  const clean=cleanFaqQuestion(question);
  if(!clean)return {accepted:false,reason:'QUESTION_REJECTED_BY_PRIVACY_FILTER'};
@@ -24,6 +24,6 @@ export async function queueFaqQuestion(question,{consent=false,enabled=false,sto
  const hash=createHash('sha256').update(stable).digest('hex');
  const record={id:hash.slice(0,24),question:clean,state:'PENDING_REVIEW',source:'VOLUNTARY_QUESTION',created_at:new Date().toISOString(),
    note:'Candidate only. Must be reviewed against official documents before publication.'};
- const res=await store.setJSON('pending/'+record.id,record,{onlyIfNew:true});
+ const res=await (store||faqQueueStore()).setJSON('pending/'+record.id,record,{onlyIfNew:true});
  return {accepted:true,created:res.modified===true,id:record.id};
 }
