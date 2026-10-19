@@ -69,3 +69,8 @@
   .sidebar .side-brand .brand-copy strong{font-size:29px}
   .sidebar .side-brand .brand-copy small{font-size:7.4px;letter-spacing:.1px}
 }
+
+/* Optional question contribution, visible only when backend explicitly enables it. */
+.learn-consent:not([hidden]) { display:flex;align-items:center;padding:6px 17px 8px;color:var(--muted, #657080);font-size:11px;line-height:1.45; }
+.learn-consent label { display:flex;align-items:flex-start;gap:9px;cursor:pointer; }
+.learn-consent input { flex:0 0 auto;margin:2px 0 0;accent-color:#167b7a; }
