@@ -35,7 +35,12 @@ export async function findRegulations(question,{store=privateStore(),limit=5}={}
  const groups=new Map();for(const r of ranked){const grp=Math.floor(r.id/50);if(!groups.has(grp))groups.set(grp,[]);groups.get(grp).push(r)}
  const loaded=await Promise.all([...groups.keys()].map(async grp=>({grp,items:await store.get(`${active.run}/chunks/${grp}`,{type:'json'})||[]})));
  const found=new Map();for(const {grp,items} of loaded){for(const r of (groups.get(grp)||[])){const c=items[r.id%50];if(c&&c.id===r.id)found.set(r.id,{...c,score:r.score,hits:r.hits});}}
- const best=[...found.values()].filter(x=>typeof x.text==='string'&&x.text.length>45).sort((a,b)=>b.score-a.score);
+ // Fail closed: indexing a document is not approval to send its text to Gemini.
+ const best=[...found.values()].filter(x=>
+   String(x.approved_for_ai||'').toUpperCase()==='YA' &&
+   String(x.indexing_status||'').toUpperCase()==='READY' &&
+   typeof x.text==='string'&&x.text.length>45
+ ).sort((a,b)=>b.score-a.score);
  const selected=[],perPage=new Set(),perDoc=new Map();for(const item of best){
     const pageKey=`${item.document_id}|${item.page}`;
     if(perPage.has(pageKey)||(perDoc.get(item.document_id)||0)>=2)continue;
