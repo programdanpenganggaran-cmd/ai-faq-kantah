@@ -1,0 +1,1 @@
+export const tokenize = input => String(input || '').toLowerCase().split(/\s+/);
