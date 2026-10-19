@@ -41,5 +41,3 @@ jobs:
             Periksa link JDIH, nomor perubahan, tanggal berlaku, dan relevansinya sebelum merge.
             Naskah PDF, indeks Google Drive, API key, dan 9.140 chunk tidak terlibat.
             Jika ada nomor baru pada 'related_untracked', tambahkan ke daftar pantauan setelah memeriksa kaitannya.
-          labels: |
-            documentation
