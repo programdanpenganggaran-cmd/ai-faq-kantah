@@ -1,0 +1,38 @@
+name: FAQ PP RAG staging checks
+
+on:
+  push:
+    branches:
+      - develop/faq-pp-rag-5c
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "netlify/knowledge/**"
+      - "netlify/functions/**"
+      - "tests/**"
+      - "package.json"
+      - ".github/workflows/faqpp-rag-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Node RAG regression tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install pinned Netlify Blobs
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Syntax checks
+        run: |
+          node --check netlify/knowledge/private-search.mjs
+          node --check netlify/functions/rag-admin.mjs
+          node --check netlify/functions/chat.mjs
+      - name: Private RAG regression tests
+        run: npm run test:rag
