@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0d3257" />
-  <meta name="description" content="Rujukan — Purwarupa AI FAQ Kantor Pertanahan untuk perencanaan, penganggaran, dan regulasi, dikembangkan dalam konteks Biro Perencanaan dan Kerja Sama." />
-  <title>Rujukan | AI FAQ Kantah — Biro Perencanaan dan Kerja Sama</title>
+  <meta name="description" content="Frequently Asked Question - Perencanaan Penganggaran (FAQ PP), asisten AI perencanaan dan penganggaran untuk Kantor Pertanahan, Biro Perencanaan dan Kerja Sama Kementerian ATR/BPN." />
+  <title>FAQ PP | Frequently Asked Question - Perencanaan Penganggaran | Biro Perencanaan dan Kerja Sama</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,8 +20,8 @@
   <aside class="sidebar" id="sidebar" aria-label="Menu aplikasi">
     <div class="sidebar-top">
       <div class="side-brand">
-        <div class="r-symbol">R<span>.</span></div>
-        <div><strong>Rujukan<span class="brand-sup"> AI</span></strong><small>FAQ KANTOR PERTANAHAN</small></div>
+        <div class="r-symbol">PP<span>.</span></div>
+        <div><strong>FAQ PP<span class="brand-sup"> AI</span></strong><small>PERENCANAAN · PENGANGGARAN</small></div>
       </div>
       <div class="beta-label"><span class="beta-dot"></span> BETA · UJI COBA MANDIRI</div>
       <button type="button" class="new-chat" id="newChat"><span class="plus-icon">＋</span><span>Percakapan baru</span><span class="shortcut">Alt + N</span></button>
@@ -36,7 +36,7 @@
       <div class="side-heading history-heading"><span>RIWAYAT DI PERANGKAT</span><button id="clearHistory" class="text-button" type="button" title="Hapus seluruh histori browser">Hapus</button></div>
       <div class="history-list" id="historyList"><div class="history-empty">Belum ada percakapan tersimpan.</div></div>
     </div>
-    <div class="sidebar-bottom"><div class="side-info"><div class="side-info-title"><span>◌</span> Tentang Rujukan</div><p>Asisten pengetahuan untuk uji coba. Jawaban AI belum menjadi pendapat atau keputusan resmi instansi.</p></div><span class="side-copy">© 2026 · Rujukan V2.0</span></div>
+    <div class="sidebar-bottom"><div class="side-info"><div class="side-info-title"><span>◌</span> Tentang FAQ PP</div><p>Asisten pengetahuan untuk uji coba. Jawaban AI belum menjadi pendapat atau keputusan resmi instansi.</p></div><span class="side-copy">© 2026 · FAQ PP V2.2</span></div>
   </aside>
   <main class="main-panel">
     <header class="topbar">
@@ -50,9 +50,9 @@
       <div class="workspace-grid"></div>
       <div class="chat-scroll" id="chatScroll">
         <div class="welcome-area" id="welcomeArea">
-          <div class="welcome-visual"><div class="halo halo-a"></div><div class="halo halo-b"></div><div class="welcome-logo"><span>R<span class="dot">.</span></span></div><span class="sparkle sparkle-a">✦</span><span class="sparkle sparkle-b">✳</span></div>
-          <div class="eyebrow"><span class="eyebrow-line"></span> ASISTEN PENGETAHUAN DIGITAL <span class="eyebrow-line"></span></div>
-          <h1>Halo, ada yang bisa<br /><span>Rujukan</span> bantu hari ini?</h1>
+          <div class="welcome-visual"><div class="halo halo-a"></div><div class="halo halo-b"></div><div class="welcome-logo"><span>PP<span class="dot">.</span></span></div><span class="sparkle sparkle-a">✦</span><span class="sparkle sparkle-b">✳</span></div>
+          <div class="eyebrow"><span class="eyebrow-line"></span> FREQUENTLY ASKED QUESTION · PERENCANAAN PENGANGGARAN <span class="eyebrow-line"></span></div>
+          <h1>Halo, ada yang bisa<br /><span>FAQ PP</span> bantu hari ini?</h1>
           <p class="welcome-sub">Ruang tanya jawab yang lebih praktis untuk memahami perencanaan, penganggaran, dan ketentuan terkait di lingkungan Kantor Pertanahan.</p>
           <div class="welcome-status" id="welcomeStatus">Memeriksa ketersediaan AI...</div>
           <div class="suggest-label"><span>✧</span> MULAI DENGAN PERTANYAAN</div>
@@ -62,13 +62,13 @@
             <button type="button" class="suggestion-card" data-topic="revision" data-question="Apa yang perlu diperiksa sebelum mengajukan revisi anggaran?" ><span class="suggest-icon blue">⇄</span><span class="suggest-text"><strong>Revisi anggaran</strong><small>Prosedur dan dokumen pendukung</small></span><span class="suggest-arrow">↗</span></button>
             <button type="button" class="suggestion-card" data-topic="execution" data-question="Apa saja hal yang perlu diperhatikan dalam monitoring pelaksanaan anggaran satker?" ><span class="suggest-icon lavender">▤</span><span class="suggest-text"><strong>Monitoring & pelaporan</strong><small>Pemantauan kegiatan satuan kerja</small></span><span class="suggest-arrow">↗</span></button>
           </div>
-          <details class="qa-bank"><summary>Uji 18 pertanyaan dari Kantah <span>▼</span></summary><p class="qa-bank-intro">Pilih contoh pertanyaan untuk menguji Gemini. Rujukan peraturan belum otomatis tersedia sampai disetujui dan diindeks.</p><div class="qa-quick-grid" id="questionBank"></div></details>
+          <details class="qa-bank"><summary>Uji 18 pertanyaan dari Kantah <span>▼</span></summary><p class="qa-bank-intro">Pilih contoh pertanyaan untuk menguji Gemini. Materi peraturan belum otomatis tersedia sampai disetujui dan diindeks.</p><div class="qa-quick-grid" id="questionBank"></div></details>
         </div>
         <div class="messages" id="messages" role="log" aria-live="polite" aria-relevant="additions"></div>
       </div>
       <div class="input-dock">
-        <div class="context-bar"><span class="context-left"><span class="mini-sparkle">✧</span> <strong>Rujukan AI</strong> · <span id="composerMode">Mode demo lokal</span></span><span class="context-right">Didesain untuk membantu, bukan menggantikan telaah regulasi.</span></div>
-        <form class="composer" id="chatForm"><textarea id="questionInput" rows="1" maxlength="1500" aria-label="Pertanyaan untuk Rujukan" placeholder="Tanyakan tentang perencanaan, penganggaran, atau regulasi..." required></textarea><div class="composer-footer"><div class="input-tools"><span class="input-hint">↵ Enter kirim · Shift + Enter baris baru</span><span id="charCounter" class="char-counter">0/1500</span></div><button class="send-button" type="submit" id="sendButton" aria-label="Kirim pesan"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="m4 12 16-8-5 16-3-7-8-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m12 13 8-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div></form>
+        <div class="context-bar"><span class="context-left"><span class="mini-sparkle">✧</span> <strong>FAQ PP AI</strong> · <span id="composerMode">Mode demo lokal</span></span><span class="context-right">Didesain untuk membantu, bukan menggantikan telaah regulasi.</span></div>
+        <form class="composer" id="chatForm"><textarea id="questionInput" rows="1" maxlength="1500" aria-label="Pertanyaan untuk FAQ PP" placeholder="Tanyakan tentang perencanaan, penganggaran, atau regulasi..." required></textarea><div class="composer-footer"><div class="input-tools"><span class="input-hint">↵ Enter kirim · Shift + Enter baris baru</span><span id="charCounter" class="char-counter">0/1500</span></div><button class="send-button" type="submit" id="sendButton" aria-label="Kirim pesan"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="m4 12 16-8-5 16-3-7-8-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m12 13 8-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div></form>
         <div class="footer-note"><span class="gold-dot">●</span> Purwarupa mandiri, bukan kanal resmi atau produk yang telah disahkan ATR/BPN. Jangan masukkan NIK, data pemohon, atau informasi rahasia.</div>
       </div>
     </section>
