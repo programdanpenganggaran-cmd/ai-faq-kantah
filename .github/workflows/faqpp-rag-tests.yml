@@ -14,6 +14,10 @@ on:
       - "package.json"
       - ".github/workflows/faqpp-rag-tests.yml"
 
+concurrency:
+  group: faqpp-rag-staging-\${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
