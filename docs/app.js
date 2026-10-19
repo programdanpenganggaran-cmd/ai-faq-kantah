@@ -125,7 +125,19 @@
   function openSettings(){$('apiUrl').value=state.api;$('accessCode').value=state.code;feedback('');$('settingsModal').classList.remove('hidden');$('apiUrl').focus();}
   function closeSettings(){$('settingsModal').classList.add('hidden');}
   function setCategory(topic){document.querySelectorAll('.category').forEach(x=>x.classList.toggle('active',x.dataset.topic===topic));document.querySelectorAll('.suggestion-card').forEach(x=>{x.hidden=topic!=='all'&&x.dataset.topic!==topic;});if(current()?.messages.length)newChat();closeMenu();}
-  const atr=$('atrLogo');atr.src=config.LOGO_URL||'';atr.onerror=()=>{atr.style.display='none'; const fallback=document.createElement('strong');fallback.textContent='ATR';fallback.style.cssText='font:800 15px var(--display);color:#0a5271';atr.parentElement.append(fallback);};
+  for (const logoId of ['atrLogo', 'sidebarAtrLogo']) {
+    const logo=$(logoId);
+    if (!logo) continue;
+    logo.onerror=()=>{
+      logo.style.display='none';
+      const fallback=document.createElement('strong');
+      fallback.className='logo-fallback';
+      fallback.textContent='ATR/BPN';
+      if (logoId==='atrLogo') fallback.style.cssText='font:800 12px var(--display);color:#0a5271';
+      logo.parentElement.append(fallback);
+    };
+    logo.src=config.LOGO_URL||'';
+  }
   $('newChat').addEventListener('click',()=>{newChat();closeMenu();});
   $('menuButton').addEventListener('click',()=>{const show=!$('sidebar').classList.contains('open');$('sidebar').classList.toggle('open',show);$('scrim').hidden=!show;$('menuButton').setAttribute('aria-expanded',String(show));});
   $('scrim').addEventListener('click',closeMenu);
