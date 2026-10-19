@@ -1,4 +1,4 @@
-/** Rujukan V2 · Netlify Functions · Gemini API Free
+/** FAQ PP V2.2 · Netlify Functions · Gemini API Free
  * Akses percakapan demo; BUKAN endpoint RAG peraturan. Tidak menyimpan pertanyaan.
  * Secrets: GEMINI_API_KEY, DEMO_ACCESS_CODE (disarankan), ALLOWED_ORIGINS.
  */
@@ -18,7 +18,7 @@ export default async (request) => {
   if(!key)return json({error:'GEMINI_API_KEY belum disetel di Netlify Environment variables.'},503,a.origin);
   const model=(process.env.GEMINI_MODEL||MODEL_DEFAULT).trim();
   if(!/^gemini-[a-z0-9.-]+$/.test(model))return json({error:'GEMINI_MODEL tidak valid.'},500,a.origin);
-  if(request.method==='GET')return json({status:'ready',service:'Rujukan AI FAQ Kantah',model,rag:Array.isArray(publicEntries)&&publicEntries.some(e=>e.approved_for_publication===true),retrieval:'lexical',knowledge_policy:'PUBLIC_APPROVAL_REQUIRED'},200,a.origin);
+  if(request.method==='GET')return json({status:'ready',service:'Frequently Asked Question - Perencanaan Penganggaran (FAQ PP)',model,rag:Array.isArray(publicEntries)&&publicEntries.some(e=>e.approved_for_publication===true),retrieval:'lexical',knowledge_policy:'PUBLIC_APPROVAL_REQUIRED'},200,a.origin);
   const length=Number(request.headers.get('content-length')||0);if(length>12000)return json({error:'Permintaan terlalu besar.'},413,a.origin);
   let input;try{const raw=await request.text();if(raw.length>12000)return json({error:'Permintaan terlalu besar.'},413,a.origin);input=JSON.parse(raw);}catch{return json({error:'Body harus JSON yang valid.'},400,a.origin);}
   const question=typeof input.question==='string'?input.question.trim():'';
@@ -28,7 +28,7 @@ export default async (request) => {
   const contents=[];
   for(const item of history){if(!item || !['user','model'].includes(item.role) || typeof item.text!=='string')continue;const t=item.text.slice(0,1800).trim();if(t)contents.push({role:item.role,parts:[{text:t}]});}
   contents.push({role:'user',parts:[{text:question}]});
-  let prompt=`Anda adalah Rujukan, asisten percakapan uji coba seputar perencanaan, penganggaran, dan administrasi publik Indonesia untuk Kantor Pertanahan. Jawab dalam bahasa Indonesia profesional, jelas, ringkas, namun hangat. Situs ini adalah PURWARUPA MANDIRI; hanya sumber yang lolos pemeriksaan publikasi di sisi server boleh dirujuk. Anda boleh menjelaskan konsep umum, membahas analisis bersyarat, dan membantu memahami pertanyaan. JANGAN mengaku mengakses Google Drive langsung atau mengecek status hukum terbaru; jangan mengarang nomor pasal, PMK, atau SE yang tidak termuat dalam SUMBER TERVERIFIKASI yang disediakan pada pesan sistem. JANGAN menciptakan kutipan regulasi atau sumber. Jika pertanyaan memerlukan penetapan MAK, revisi DIPA, ketentuan SBM atau keputusan resmi, jelaskan bahwa rujukan dan ketentuan terkini perlu diverifikasi oleh petugas. Hindari detail rahasia atau data pribadi. Jangan berikan kesan chatbot ini mewakili pernyataan resmi instansi.`;
+  let prompt=`Anda adalah FAQ PP (Frequently Asked Question - Perencanaan Penganggaran), asisten percakapan uji coba seputar perencanaan, penganggaran, dan administrasi publik Indonesia untuk Kantor Pertanahan. Jawab dalam bahasa Indonesia profesional, jelas, ringkas, namun hangat. Situs ini adalah PURWARUPA MANDIRI; hanya sumber yang lolos pemeriksaan publikasi di sisi server boleh dirujuk. Anda boleh menjelaskan konsep umum, membahas analisis bersyarat, dan membantu memahami pertanyaan. JANGAN mengaku mengakses Google Drive langsung atau mengecek status hukum terbaru; jangan mengarang nomor pasal, PMK, atau SE yang tidak termuat dalam SUMBER TERVERIFIKASI yang disediakan pada pesan sistem. JANGAN menciptakan kutipan regulasi atau sumber. Jika pertanyaan memerlukan penetapan MAK, revisi DIPA, ketentuan SBM atau keputusan resmi, jelaskan bahwa rujukan dan ketentuan terkini perlu diverifikasi oleh petugas. Hindari detail rahasia atau data pribadi. Jangan berikan kesan chatbot ini mewakili pernyataan resmi instansi.`;
   const retrieved=retrieveApprovedSources(question,publicEntries);
   if(retrieved.length){
     const context=retrieved.map((s,i)=>({id:i+1,title:s.title,section:s.section,page:s.page,url:s.url,excerpt:s.excerpt}));
