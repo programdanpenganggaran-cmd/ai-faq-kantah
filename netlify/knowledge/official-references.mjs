@@ -11,6 +11,20 @@ export const OFFICIAL_REFERENCE_PAGES=Object.freeze([
     verified_page_on:'2026-10-19',legal_status:'PERIKSA_DI_JDIH',
   }),
   Object.freeze({
+    id:'PMK-63-2026',
+    title:'PMK 63 Tahun 2026 — Perubahan tarif PNBP volatil ATR/BPN',
+    url:'https://jdih.kemenkeu.go.id/dok/pmk-63-tahun-2026',
+    topics:['pn bp','pnbp','tarif','volatil','atr/bpn','penerimaan negara bukan pajak','pmk 63'],
+    verified_page_on:'2026-10-19',legal_status:'PERIKSA_DI_JDIH',
+  }),
+  Object.freeze({
+    id:'PMK-98-2024',
+    title:'PMK 98 Tahun 2024 — Tarif PNBP volatil ATR/BPN',
+    url:'https://jdih.kemenkeu.go.id/dok/pmk-98-tahun-2024',
+    topics:['pnbp volatil','pmk 98','tarif atas jenis pnbp'],
+    verified_page_on:'2026-10-19',legal_status:'PERIKSA_DI_JDIH',
+  }),
+  Object.freeze({
     id:'PMK-54-2026',title:'PMK 54 Tahun 2026 — Standar Biaya Masukan',
     url:'https://jdih.kemenkeu.go.id/dok/pmk-54-tahun-2026',
     topics:['sbm','biaya','standar biaya','honorarium','perjalanan dinas','pemeliharaan','pmk 54'],
