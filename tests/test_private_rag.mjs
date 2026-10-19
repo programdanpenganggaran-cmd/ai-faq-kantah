@@ -1,0 +1,45 @@
+import assert from 'node:assert/strict';
+import { findRegulations, queryTerms, shard, getActiveRag } from '../netlify/knowledge/private-search.mjs';
+import admin from '../netlify/functions/rag-admin.mjs';
+const envSecret = 'local-testing-placeholder-access-code';
+process.env.RAG_ADMIN_KEY=envSecret;
+const RUN='v20261019t120000';
+const sample = { id:0,document_id:'DOC-000001',title:'PMK Pengelolaan Anggaran 51 52',
+  url:'https://jdih.kemenkeu.go.id/',page:12,section:'Pasal 3',status_regulasi:'PERLU_VERIFIKASI',
+  text:'Peraturan ini menjelaskan revisi belanja 51 dan belanja 52 terkait ketentuan perencanaan penganggaran satker.'};
+const store = globalThis.__mockBlobs.store;
+assert.ok(queryTerms('revisi belanja 51 ke 52').includes('51'));
+const hash=shard('51');
+assert.equal(hash.length,2);
+const empty=await findRegulations('revisi 51 ke 52',{store});
+assert.equal(empty.results.length,0);
+store.map.set('active',{run:RUN,docs:34,chunks:9140});
+store.map.set(RUN+'/idx/'+hash,{'51':[[0,4]]});
+store.map.set(RUN+'/idx/'+shard('52'),{...(store.map.get(RUN+'/idx/'+shard('52'))||{}),'52':[[0,3]]});
+store.map.set(RUN+'/idx/'+shard('revisi'),{...(store.map.get(RUN+'/idx/'+shard('revisi'))||{}),'revisi':[[0,2]]});
+store.map.set(RUN+'/chunks/0',[sample]);
+const found=await findRegulations('Revisi belanja 51 ke 52',{store});
+assert.equal(found.results.length,1);
+assert.equal(found.results[0].document_id,'DOC-000001');
+assert.equal(found.results[0].page,12);
+assert.equal(found.results[0].status_regulasi,'PERLU_VERIFIKASI');
+const unauth=await admin(new Request('https://example.com/.netlify/functions/rag-admin',{method:'POST',body:JSON.stringify({run:RUN,action:'status'})}),{deploy:{context:'production'}});
+assert.equal(unauth.status,401);
+const context={deploy:{context:'production'}};
+const req=(body,token=envSecret)=>new Request('https://example.com/.netlify/functions/rag-admin',{
+ method:'POST',headers:{'x-rag-admin-key':token,'content-type':'application/json'},body:JSON.stringify(body)});
+const bad=await admin(req({run:RUN,action:'put',key:'../../../bad',payload:{}}),context);
+assert.equal(bad.status,400);
+const candidate={run:'v20261019t130000',docs:34,chunks:9140,blocks:183,shards:64};
+store.map.set(candidate.run+'/meta',candidate);
+const denied=await admin(req({run:candidate.run,action:'activate'}),context);
+assert.equal(denied.status,409,'Activation must reject incomplete index');
+assert.equal((await getActiveRag(store)).run,RUN,'Failed activation must preserve previous index');
+const keys=[...Array(183)].map((_,i)=>candidate.run+'/chunks/'+i);
+for(let i=0;i<64;i++) keys.push(candidate.run+'/idx/'+i.toString(16).padStart(2,'0'));
+for(const key of keys)store.map.set(key,{});
+const accepted=await admin(req({run:candidate.run,action:'activate'}),context);
+assert.equal(accepted.status,200);
+assert.equal((await accepted.json()).status,'activated');
+assert.equal((await getActiveRag(store)).run,candidate.run);
+console.log('PASS: private lexical search, citations, auth, upload key rejection, full-index activation');
