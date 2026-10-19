@@ -34,5 +34,7 @@ jobs:
           node --check netlify/knowledge/private-search.mjs
           node --check netlify/functions/rag-admin.mjs
           node --check netlify/functions/chat.mjs
-      - name: Private RAG regression tests
-        run: npm run test:rag
+      - name: All FAQ PP backend and hybrid regressions
+        run: npm test
+      - name: Frontend syntax check
+        run: node --check docs/app.js
