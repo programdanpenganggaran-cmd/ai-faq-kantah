@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import { OFFICIAL_REFERENCE_PAGES, isOfficialRegulationUrl, officialSourceHints } from '../netlify/knowledge/official-references.mjs';
 import { cleanFaqQuestion, queueFaqQuestion } from '../netlify/knowledge/faq-candidates.mjs';
 
-assert.equal(OFFICIAL_REFERENCE_PAGES.length,2);
+assert.equal(OFFICIAL_REFERENCE_PAGES.length,4);
 assert.ok(officialSourceHints('Apa perubahan PMK 62 Tahun 2023 untuk revisi DIPA?').some(s=>s.id==='PMK-41-2026'));
 assert.ok(officialSourceHints('Berapa batas SBM tahun 2027?').some(s=>s.id==='PMK-54-2026'));
+assert.ok(officialSourceHints('Bagaimana ketentuan tarif PNBP volatil ATR/BPN?').some(s=>s.id==='PMK-63-2026'));
+assert.ok(officialSourceHints('Apa PMK 98 untuk penerimaan negara bukan pajak?').some(s=>s.id==='PMK-98-2024'));
 assert.ok(officialSourceHints('Halo yang tidak ada hubungannya').length===0);
 assert.equal(isOfficialRegulationUrl('https://jdih.kemenkeu.go.id/dok/pmk-41-tahun-2026'),true);
 assert.equal(isOfficialRegulationUrl('https://jdih.kemenkeu.go.id.evil.example/dok/pmk-41-tahun-2026'),false);
