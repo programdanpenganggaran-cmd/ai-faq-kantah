@@ -80,16 +80,16 @@
     });
   }
   function addMessage(role,content,kind='',sources=[]){const wrap=document.createElement('div');wrap.className=`message ${role}`;
-    if(role==='assistant'){const avatar=document.createElement('div');avatar.className='bot-avatar';avatar.innerHTML='R<span>.</span>';wrap.append(avatar);}
+    if(role==='assistant'){const avatar=document.createElement('div');avatar.className='bot-avatar';avatar.innerHTML='PP<span>.</span>';wrap.append(avatar);}
     const bubble=document.createElement('div');bubble.className='bubble';
-    if(role==='assistant'){const label=document.createElement('div');label.className='bubble-label';label.textContent='RUJUKAN  /  '+(kind==='demo'?'MODE DEMO':kind==='error'?'PEMBERITAHUAN':'AI GEMINI');bubble.append(label);}
+    if(role==='assistant'){const label=document.createElement('div');label.className='bubble-label';label.textContent='FAQ PP  /  '+(kind==='demo'?'MODE DEMO':kind==='error'?'PEMBERITAHUAN':'AI GEMINI');bubble.append(label);}
     const p=document.createElement('p');renderRichText(p,content);bubble.append(p);
     if(role==='assistant' && kind!=='error'){
       const foot=document.createElement('div');foot.className='message-info'+(Array.isArray(sources)&&sources.length?' good':'');foot.textContent=kind==='demo'?'◌ Respons simulasi offline, bukan jawaban AI.':(Array.isArray(sources)&&sources.length?'✓ Materi rujukan tersedia.':'⚠ Belum berdasarkan indeks peraturan yang diverifikasi.');bubble.append(foot);
     }
     if(role==='assistant' && Array.isArray(sources) && sources.length){
       const refs=document.createElement('div');refs.className='source-panel';
-      const heading=document.createElement('div');heading.className='source-heading';heading.textContent='RUJUKAN DOKUMEN · PERIKSA NASKAH ASLI';refs.append(heading);
+      const heading=document.createElement('div');heading.className='source-heading';heading.textContent='DASAR RUJUKAN · PERIKSA NASKAH ASLI';refs.append(heading);
       for(const src of sources.slice(0,4)){
         if(!src||typeof src.url!=='string'||!src.url.startsWith('https://'))continue;
         const link=document.createElement('a');link.className='source-link';link.href=src.url;link.target='_blank';link.rel='noopener noreferrer';
@@ -100,12 +100,12 @@
     }
     wrap.append(bubble);$('messages').append(wrap);return wrap;}
   function render(){renderHistory();$('messages').replaceChildren();const c=current();const has=c?.messages.length;$('welcomeArea').classList.toggle('hidden',!!has);if(has) c.messages.forEach(m=>addMessage(m.role,m.text,m.kind,m.sources));requestAnimationFrame(()=>{ $chat.scrollTop=has?$chat.scrollHeight:0; });}
-  function status(mode){$('connectionText').textContent=mode==='online'?'AI Gemini terhubung':mode==='pending'?'Menghubungkan...':'Mode demo offline';$('statusPulse').classList.toggle('online',mode==='online');$('composerMode').textContent=mode==='online'?'AI Gemini · percakapan langsung':'Mode demo lokal';$('welcomeStatus').textContent=mode==='online'?'✦  AI online siap digunakan. Rujukan hukum belum diaktifkan.':'◌  Mode demo offline aktif. Hubungkan Netlify pada Pengaturan untuk chat AI.';}
+  function status(mode){$('connectionText').textContent=mode==='online'?'AI Gemini terhubung':mode==='pending'?'Menghubungkan...':'Mode demo offline';$('statusPulse').classList.toggle('online',mode==='online');$('composerMode').textContent=mode==='online'?'AI Gemini · percakapan langsung':'Mode demo lokal';$('welcomeStatus').textContent=mode==='online'?'✦  AI online siap digunakan. Indeks peraturan belum diaktifkan.':'◌  Mode demo offline aktif. Hubungkan Netlify pada Pengaturan untuk chat AI.';}
   function demoAnswer(q){const t=q.toLowerCase();if(/52|53|belanja|akun/.test(t))return 'Untuk membedakan kelompok belanja 52 dan 53, periksa sifat kegiatan, klasifikasi BAS, serta apakah hasil pekerjaan memenuhi kriteria belanja modal. Ini hanya contoh respons offline. Koneksi Gemini dan indeks peraturan diperlukan sebelum aplikasi dapat memberikan analisis yang berdasar sumber.';
     if(/revisi|pok|dipa/.test(t))return 'Proses revisi anggaran biasanya memerlukan pemeriksaan kewenangan, pagu dan volume keluaran, dokumen pendukung, serta mekanisme pengajuan yang berlaku. Respons ini masih simulasi; belum memeriksa naskah peraturan atau kewenangan revisi yang tepat.';
     if(/sbm|sbk|biaya/.test(t))return 'Dalam penyusunan anggaran, SBM dan SBK berperan sebagai acuan biaya sesuai regulasi dan tahun anggaran terkait. Ini respons contoh. Aktifkan AI online dan basis pengetahuan yang disetujui untuk jawaban bersumber.';
     if(/peraturan|sumber|koleksi/.test(t))return 'Knowledge base masih dipersiapkan. Dokumen yang telah di-ingest belum otomatis dipublikasikan ke situs. Saat ini mode offline tidak bisa menelusuri PDF, pasal, maupun halaman sumber.';
-    return 'Pertanyaanmu sudah diterima oleh tampilan Rujukan. Saat ini aplikasi berada di mode demo offline, sehingga jawaban ini hanya simulasi. Buka Pengaturan dan hubungkan Netlify Functions + Gemini untuk mulai mencoba percakapan AI sungguhan.';}
+    return 'Pertanyaanmu sudah diterima oleh FAQ PP. Saat ini aplikasi berada di mode demo offline, sehingga jawaban ini hanya simulasi. Buka Pengaturan dan hubungkan Netlify Functions + Gemini untuk mulai mencoba percakapan AI sungguhan.';}
   function setPending(on){state.pending=on;$('sendButton').disabled=on;$('questionInput').disabled=on;}
   async function requestAI(text, history){const response=await fetch(state.api,{method:'POST',headers:{'content-type':'application/json',...(state.code?{'x-demo-access-code':state.code}:{})},body:JSON.stringify({question:text,history}),signal:AbortSignal.timeout(28000)});
     let data;try{data=await response.json();}catch{throw new Error('Server tidak mengembalikan JSON yang valid. Periksa URL fungsi Netlify.');}
@@ -119,7 +119,7 @@
     finally{c.updated=now();persist();setPending(false);render();$('questionInput').focus();}
   }
   function resizeTextarea(){$('questionInput').style.height='auto';$('questionInput').style.height=Math.min($('questionInput').scrollHeight,125)+'px';$('charCounter').textContent=$('questionInput').value.length+'/1500';}
-  async function checkConnection(api,code){if(!safeHttpUrl(api))throw new Error('URL harus HTTPS dan berakhir dengan /.netlify/functions/chat');const r=await fetch(api,{method:'GET',headers:code?{'x-demo-access-code':code}:{},signal:AbortSignal.timeout(10000)});let d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||`Koneksi gagal (HTTP ${r.status})`);if(d.status!=='ready')throw new Error('Endpoint tidak merespons sebagai backend Rujukan.');return d;}
+  async function checkConnection(api,code){if(!safeHttpUrl(api))throw new Error('URL harus HTTPS dan berakhir dengan /.netlify/functions/chat');const r=await fetch(api,{method:'GET',headers:code?{'x-demo-access-code':code}:{},signal:AbortSignal.timeout(10000)});let d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||`Koneksi gagal (HTTP ${r.status})`);if(d.status!=='ready')throw new Error('Endpoint tidak merespons sebagai backend FAQ PP.');return d;}
   async function connect(silent=false){if(!state.api){state.connected=false;status('offline');return;}status('pending');try{await checkConnection(state.api,state.code);state.connected=true;status('online');if(!silent)feedback('Koneksi berhasil! Gemini siap digunakan.','success');}catch(e){state.connected=false;status('offline');if(!silent)feedback(e.message,'error');}}
   function feedback(text,type=''){const f=$('settingsFeedback');f.className='feedback '+type;f.textContent=text;}
   function openSettings(){$('apiUrl').value=state.api;$('accessCode').value=state.code;feedback('');$('settingsModal').classList.remove('hidden');$('apiUrl').focus();}
