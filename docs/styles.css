@@ -30,3 +30,10 @@
 .source-link{color:#126d79;text-decoration:none;background:#f2f9f8;padding:9px 11px;border-radius:9px;line-height:1.45;font-size:.82rem;overflow-wrap:anywhere}
 .source-link:hover{text-decoration:underline;background:#e5f4f0}
 @media(max-width:600px){.qa-bank{margin-top:16px;border-radius:15px}.qa-quick-grid{grid-template-columns:1fr}.quick-question{font-size:.87rem}.source-link{font-size:.79rem}}
+
+/* Identitas FAQ PP; tidak mengubah layout chat atau breakpoint yang ada. */
+.r-symbol{font-size:23px;letter-spacing:-1px}
+.bot-avatar{font-size:17px;letter-spacing:-1px}
+.welcome-logo{font-size:clamp(30px,3vw,43px);letter-spacing:-2px}
+.side-brand small{letter-spacing:1.05px;line-height:1.5}
+@media(max-width:600px){.eyebrow{font-size:8px;letter-spacing:.65px;text-align:center}.welcome-logo{font-size:32px}}
