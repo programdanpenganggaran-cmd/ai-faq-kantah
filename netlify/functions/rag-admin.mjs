@@ -29,8 +29,9 @@ export default async(request,context)=>{
   if(data.action==='activate'){
     const meta=await store.get(`${run}/meta`,{type:'json'});
     if(!meta||meta.run!==run||!Number.isInteger(meta.chunks)||meta.chunks<1||!Number.isInteger(meta.docs)||meta.docs<1)return reply({error:'Metadata missing/invalid'},409);
-    if(meta.docs!==34||meta.chunks!==9140||meta.shards!==64||meta.blocks!==Math.ceil(meta.chunks/50))
-      return reply({error:'Unexpected metadata: expected 34 documents and 9140 chunks'},409);
+    if(meta.docs!==34||meta.chunks!==9140||meta.shards!==64||meta.blocks!==Math.ceil(meta.chunks/50)||
+       meta.schema!==2||meta.docs_approved_for_ai!==34)
+      return reply({error:'Metadata belum disetujui: wajib 34/34 dokumen READY + approved_for_ai=YA; 9140 chunks dan skema v2'},409);
     const expected=[...Array(meta.blocks)].map((_,i)=>`${run}/chunks/${i}`);
     for(let i=0;i<64;i++)expected.push(`${run}/idx/${i.toString(16).padStart(2,'0')}`);
     const missing=[];
