@@ -10,6 +10,9 @@
     "@netlify/blobs": "11.1.4"
   },
   "scripts": {
-    "test:rag": "node --import ./tests/mock-blobs.mjs ./tests/test_private_rag.mjs"
+    "test:rag": "node --import ./tests/mock-blobs.mjs ./tests/test_private_rag.mjs",
+    "test:hybrid": "node --import ./tests/mock-blobs.mjs ./tests/test_hybrid_sources.mjs",
+    "test:backend": "node --import ./tests/mock-blobs.mjs ./tests/test_backend.mjs",
+    "test": "npm run test:rag && npm run test:hybrid && npm run test:backend"
   }
 }
