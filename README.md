@@ -1,4 +1,4 @@
-# RUJUKAN — AI FAQ Kantah V2
+# Frequently Asked Question - Perencanaan Penganggaran (FAQ PP)
 **Purwarupa web Biro Perencanaan dan Kerja Sama — Kementerian ATR/BPN**
 
 Versi uji coba mandiri dengan **frontend GitHub Pages**, **backend Netlify Functions**, dan **Gemini API Free**. Tidak memakai n8n, database berbayar, atau VPS.
@@ -8,7 +8,7 @@ Versi uji coba mandiri dengan **frontend GitHub Pages**, **backend Netlify Funct
 ## Struktur satu repository
 
 ```text
-RUJUKAN_AI_FAQ_KANTAH_V2/
+FAQ_PP_WEB/
 ├── docs/                   # WEBSITE yang dipublikasikan GitHub Pages
 │   ├── index.html
 │   ├── styles.css
