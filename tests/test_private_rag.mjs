@@ -5,7 +5,7 @@ const envSecret = 'local-testing-placeholder-access-code';
 process.env.RAG_ADMIN_KEY=envSecret;
 const RUN='v20261019t120000';
 const sample = { id:0,document_id:'DOC-000001',title:'PMK Pengelolaan Anggaran 51 52',
-  url:'https://jdih.kemenkeu.go.id/',page:12,section:'Pasal 3',status_regulasi:'PERLU_VERIFIKASI',
+  url:'https://jdih.kemenkeu.go.id/',page:12,section:'Pasal 3',status_regulasi:'PERLU_VERIFIKASI',approved_for_ai:'YA',indexing_status:'READY',
   text:'Peraturan ini menjelaskan revisi belanja 51 dan belanja 52 terkait ketentuan perencanaan penganggaran satker.'};
 const store = globalThis.__mockBlobs.store;
 assert.ok(queryTerms('revisi belanja 51 ke 52').includes('51'));
@@ -23,6 +23,13 @@ assert.equal(found.results.length,1);
 assert.equal(found.results[0].document_id,'DOC-000001');
 assert.equal(found.results[0].page,12);
 assert.equal(found.results[0].status_regulasi,'PERLU_VERIFIKASI');
+const itemUnapproved={...sample,approved_for_ai:'TIDAK',indexing_status:'HOLD'};
+store.map.set(RUN+'/chunks/0',[itemUnapproved]);
+const blocked=await findRegulations('Revisi belanja 51 ke 52',{store});
+assert.deepEqual(blocked.results,[], 'Unapproved documents must never enter the model context');
+store.map.set(RUN+'/chunks/0',[{...sample,approved_for_ai:'YA',indexing_status:'HOLD'}]);
+assert.deepEqual((await findRegulations('Revisi belanja 51 ke 52',{store})).results,[], 'HOLD is not READY');
+store.map.set(RUN+'/chunks/0',[sample]);
 const unauth=await admin(new Request('https://example.com/.netlify/functions/rag-admin',{method:'POST',body:JSON.stringify({run:RUN,action:'status'})}),{deploy:{context:'production'}});
 assert.equal(unauth.status,401);
 const context={deploy:{context:'production'}};
@@ -30,7 +37,7 @@ const req=(body,token=envSecret)=>new Request('https://example.com/.netlify/func
  method:'POST',headers:{'x-rag-admin-key':token,'content-type':'application/json'},body:JSON.stringify(body)});
 const bad=await admin(req({run:RUN,action:'put',key:'../../../bad',payload:{}}),context);
 assert.equal(bad.status,400);
-const candidate={run:'v20261019t130000',docs:34,chunks:9140,blocks:183,shards:64};
+const candidate={run:'v20261019t130000',docs:34,chunks:9140,blocks:183,shards:64,schema:2,docs_approved_for_ai:34};
 store.map.set(candidate.run+'/meta',candidate);
 const denied=await admin(req({run:candidate.run,action:'activate'}),context);
 assert.equal(denied.status,409,'Activation must reject incomplete index');
