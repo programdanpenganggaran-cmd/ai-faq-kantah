@@ -1,0 +1,43 @@
+name: Weekly JDIH regulation metadata monitor
+
+on:
+  schedule:
+    # Every Monday 09:20 WIB (02:20 UTC). Scheduled runs execute on default branch once merged.
+    - cron: "20 2 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify monitor syntax and deterministic tests
+        run: |
+          node --check scripts/monitor-jdih.mjs
+          node tests/test_jdih_monitor.mjs
+      - name: Fetch official JDIH regulation metadata
+        run: node scripts/monitor-jdih.mjs
+      - name: Prepare reviewed update to public metadata catalog
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: automation/jdih-metadata-updates
+          base: main
+          add-paths: data/official-jdih-observations.json
+          delete-branch: true
+          commit-message: "chore(jdih): refresh official regulation history observations"
+          title: "[AUTO REVIEW] Pembaruan metadata JDIH untuk FAQ PP"
+          body: |
+            Otomatis terdeteksi perbedaan metadata/riwayat peraturan dari laman resmi JDIH Kemenkeu.
+            Ini **BUKAN verifikasi otomatis status berlaku**, dan BUKAN persetujuan publikasi teks peraturan ke Gemini.
+            Periksa link JDIH, nomor perubahan, tanggal berlaku, dan relevansinya sebelum merge.
+            Naskah PDF, indeks Google Drive, API key, dan 9.140 chunk tidak terlibat.
+            Jika ada nomor baru pada 'related_untracked', tambahkan ke daftar pantauan setelah memeriksa kaitannya.

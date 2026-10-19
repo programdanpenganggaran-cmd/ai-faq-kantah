@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "source_policy": "Official JDIH Kemenkeu pages only. This list is public metadata, not the private Google Drive index.",
+  "watch": [
+    {
+      "id": "PMK-62-2023",
+      "url": "https://jdih.kemenkeu.go.id/dok/pmk-62-tahun-2023",
+      "topic": "Perencanaan dan pelaksanaan anggaran"
+    },
+    {
+      "id": "PMK-41-2026",
+      "url": "https://jdih.kemenkeu.go.id/dok/pmk-41-tahun-2026",
+      "topic": "Perubahan kedua PMK 62/2023"
+    },
+    {
+      "id": "PMK-54-2026",
+      "url": "https://jdih.kemenkeu.go.id/dok/pmk-54-tahun-2026",
+      "topic": "Standar Biaya Masukan"
+    },
+    {
+      "id": "PMK-98-2024",
+      "url": "https://jdih.kemenkeu.go.id/dok/pmk-98-tahun-2024",
+      "topic": "PNBP volatil ATR/BPN"
+    },
+    {
+      "id": "PMK-63-2026",
+      "url": "https://jdih.kemenkeu.go.id/dok/pmk-63-tahun-2026",
+      "topic": "Perubahan PNBP volatil ATR/BPN"
+    }
+  ]
+}
