@@ -22,7 +22,7 @@ export default async (request, context) => {
   // Production always requires the code; cross-origin preview requests are never exempt.
   const url=new URL(request.url);
   const previewSSO=context?.deploy?.context==='deploy-preview' &&
-    /^deploy-preview-\\d+--ai-faq-kantah-api\\.netlify\\.app$/i.test(url.hostname) &&
+    /^deploy-preview-\d+--ai-faq-kantah-api\.netlify\.app$/i.test(url.hostname) &&
     (!request.headers.get('origin')||request.headers.get('origin')===url.origin);
   if(requiredCode && givenCode!==requiredCode && !previewSSO)
     return json({error:'Kode akses uji coba salah atau belum diisi.'},401,a.origin);
