@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import backend from '../netlify/functions/chat.mjs';
+import { shard } from '../netlify/knowledge/private-search.mjs';
 process.env.GEMINI_API_KEY='TEST_KEY_NOT_REAL';
 process.env.DEMO_ACCESS_CODE='ONLY-FOR-TEST-12345';
 process.env.ALLOWED_ORIGINS='https://programdanpenganggaran-cmd.github.io';
@@ -17,5 +18,29 @@ globalThis.fetch=async(url,opts)=>{assert.equal(opts.headers['x-goog-api-key'],p
 x=await get('POST',{question:'Apa itu RKA?',history:[{role:'user',text:'Halo'}]});assert.equal(x.status,200);const j=await x.json();assert.equal(j.grounded,false);assert.deepEqual(j.sources,[]);assert.ok(j.reply.includes('RKA'));
 globalThis.fetch=async()=>new Response(JSON.stringify({error:{message:'quota'}}),{status:429,headers:{'content-type':'application/json'}});
 x=await get('POST',{question:'Halo'});assert.equal(x.status,429);
+// If Gemini times out but an approved RAG source exists, show a clearly labelled citation-only response.
+const mockStore=globalThis.__mockBlobs.store;
+const run='v20261020t054107';
+mockStore.map.set('active',{run,docs:34,chunks:9140});
+const source={
+  id:0,document_id:'DOC-000001',title:'Peraturan uji revisi anggaran',url:'https://jdih.kemenkeu.go.id/',
+  page:12,status_regulasi:'PERLU_VERIFIKASI',approved_for_ai:'YA',indexing_status:'READY',
+  text:'Ketentuan ini membahas mekanisme revisi anggaran dan perpindahan 51 ke 52 dalam perencanaan satker. Periksa status resmi regulasi.'
+};
+mockStore.map.set(run+'/chunks/0',[source]);
+for(const term of ['revisi','51','52']){
+  const key=run+'/idx/'+shard(term);
+  mockStore.map.set(key,{...(mockStore.map.get(key)||{}),[term]:[[0,2]]});
+}
+globalThis.fetch=async()=>{const e=new Error('simulated timeout');e.name='TimeoutError';throw e;};
+x=await get('POST',{question:'Apakah revisi belanja 51 ke 52 diperbolehkan?'});
+assert.equal(x.status,200);
+const partial=await x.json();
+assert.equal(partial.status,'partial');
+assert.equal(partial.mode,'sources-only');
+assert.ok(partial.reply.includes('bukan kesimpulan hukum'));
+assert.equal(partial.sources.length,1);
+assert.equal(partial.sources[0].page,12);
+mockStore.map.clear();
 globalThis.fetch=originalFetch;
 console.log('PASS: GET, origin, kode, validasi panjang/NIK, Gemini mock, status tanpa RAG, kuota.');
