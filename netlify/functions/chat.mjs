@@ -12,12 +12,20 @@ const json = (value,status=200,origin='') => new Response(JSON.stringify(value),
   status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff',...(origin?{'access-control-allow-origin':origin,'vary':'Origin'}:{})}
 });
 function allowed(req){const origin=req.headers.get('origin')||'';const env=(process.env.ALLOWED_ORIGINS||'').split(',').map(x=>x.trim()).filter(Boolean);if(process.env.URL){try{env.push(new URL(process.env.URL).origin);}catch{}}if(!origin)return {ok:true,origin:''};const sameOrigin=new URL(req.url).origin;const ok=origin===sameOrigin||env.includes(origin);return {ok,origin:ok?origin:''};}
-export default async (request) => {
+export default async (request, context) => {
   const a=allowed(request);if(!a.ok)return json({error:'Origin tidak diizinkan. Tambahkan origin GitHub Pages di ALLOWED_ORIGINS Netlify.'},403);
   if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{'access-control-allow-origin':a.origin||'', 'access-control-allow-methods':'GET, POST, OPTIONS','access-control-allow-headers':'content-type, x-demo-access-code','access-control-max-age':'3600','vary':'Origin'}});
   const key=process.env.GEMINI_API_KEY;const requiredCode=process.env.DEMO_ACCESS_CODE||'';const givenCode=request.headers.get('x-demo-access-code')||'';
   if(request.method!=='GET'&&request.method!=='POST')return json({error:'Metode tidak didukung.'},405,a.origin);
-  if(requiredCode && givenCode!==requiredCode)return json({error:'Kode akses uji coba salah atau belum diisi.'},401,a.origin);
+  // Deploy Previews are SSO-protected by Netlify on this site. Allow same-site preview
+  // testing without a second, independently configured DEMO_ACCESS_CODE.
+  // Production always requires the code; cross-origin preview requests are never exempt.
+  const url=new URL(request.url);
+  const previewSSO=context?.deploy?.context==='deploy-preview' &&
+    /^deploy-preview-\\d+--ai-faq-kantah-api\\.netlify\\.app$/i.test(url.hostname) &&
+    (!request.headers.get('origin')||request.headers.get('origin')===url.origin);
+  if(requiredCode && givenCode!==requiredCode && !previewSSO)
+    return json({error:'Kode akses uji coba salah atau belum diisi.'},401,a.origin);
   if(!key)return json({error:'GEMINI_API_KEY belum disetel di Netlify Environment variables.'},503,a.origin);
   const model=(process.env.GEMINI_MODEL||MODEL_DEFAULT).trim();
   if(!/^gemini-[a-z0-9.-]+$/.test(model))return json({error:'GEMINI_MODEL tidak valid.'},500,a.origin);
