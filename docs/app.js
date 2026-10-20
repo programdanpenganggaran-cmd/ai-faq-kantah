@@ -2,6 +2,9 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const config = window.RUJUKAN_CONFIG || {};
+  // A protected Netlify Deploy Preview must call its own backend, not production.
+  const previewEndpoint = /^deploy-preview-\d+--ai-faq-kantah-api\.netlify\.app$/i.test(window.location.hostname)
+    ? window.location.origin+'/.netlify/functions/chat' : '';
   const localStore = (() => { try { return window.localStorage; } catch { return {getItem:()=>null,setItem:()=>{},removeItem:()=>{}}; } })();
   const sessionStore = (() => { try { return window.sessionStorage; } catch { return {getItem:()=>null,setItem:()=>{},removeItem:()=>{}}; } })();
   const KEYS = { chats: 'rujukan-v2-chats', id: 'rujukan-v2-current', endpoint:'rujukan-v2-api-url', code:'rujukan-v2-code' };
@@ -38,7 +41,7 @@
   const state = {
     chats: safeParse(localStore.getItem(KEYS.chats), []).filter(c => c && Array.isArray(c.messages)).slice(0,25),
     currentId: localStore.getItem(KEYS.id) || '',
-    api: sessionStore.getItem(KEYS.endpoint) || config.API_URL || '',
+    api: previewEndpoint || sessionStore.getItem(KEYS.endpoint) || config.API_URL || '',
     code: sessionStore.getItem(KEYS.code) || '',
     connected: false,
     pending: false,
@@ -173,8 +176,8 @@
   document.querySelectorAll('.category').forEach(x=>x.addEventListener('click',()=>setCategory(x.dataset.topic)));
   document.querySelectorAll('.suggestion-card').forEach(x=>x.addEventListener('click',()=>send(x.dataset.question)));
   $('openSettings').addEventListener('click',openSettings);$('closeSettings').addEventListener('click',closeSettings);$('settingsModal').addEventListener('click',e=>{if(e.target===$('settingsModal'))closeSettings();});
-  $('testConnection').addEventListener('click',async()=>{feedback('Memeriksa server Netlify...');try{const result=await checkConnection($('apiUrl').value.trim(), $('accessCode').value.trim());feedback('Koneksi FAQ PP berhasil.','success');}catch(e){feedback(e.message,'error');}});
-  $('saveSettings').addEventListener('click',async()=>{const url=$('apiUrl').value.trim(),code=$('accessCode').value.trim();if(url&&!safeHttpUrl(url)){feedback('Format URL Netlify tidak valid.','error');return;}state.api=url;state.code=code;if(url)sessionStore.setItem(KEYS.endpoint,url);else sessionStore.removeItem(KEYS.endpoint);if(code)sessionStore.setItem(KEYS.code,code);else sessionStore.removeItem(KEYS.code);await connect();if(state.connected||!url){closeSettings();}});
+  $('testConnection').addEventListener('click',async()=>{feedback('Memeriksa server Netlify...');try{const result=await checkConnection(previewEndpoint||$('apiUrl').value.trim(), $('accessCode').value.trim());feedback('Koneksi FAQ PP berhasil.','success');}catch(e){feedback(e.message,'error');}});
+  $('saveSettings').addEventListener('click',async()=>{const url=previewEndpoint||$('apiUrl').value.trim(),code=$('accessCode').value.trim();if(url&&!safeHttpUrl(url)){feedback('Format URL Netlify tidak valid.','error');return;}state.api=url;state.code=code;if(url)sessionStore.setItem(KEYS.endpoint,url);else sessionStore.removeItem(KEYS.endpoint);if(code)sessionStore.setItem(KEYS.code,code);else sessionStore.removeItem(KEYS.code);await connect();if(state.connected||!url){closeSettings();}});
   $('chatForm').addEventListener('submit',e=>{e.preventDefault();send($('questionInput').value);});$('questionInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('chatForm').requestSubmit();}});$('questionInput').addEventListener('input',resizeTextarea);
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSettings();closeMenu();}if(e.altKey&&e.key.toLowerCase()==='n'){e.preventDefault();newChat();}});
   if(!current())newChat(true);else render();resizeTextarea();connect(true);

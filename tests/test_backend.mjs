@@ -10,6 +10,9 @@ const base={'origin':'https://programdanpenganggaran-cmd.github.io','x-demo-acce
 const get = async(method='GET',data={},h=base)=>await backend(new Request(url,{method,headers:{...h,...(method==='POST'?{'content-type':'application/json'}:{})},...(method==='POST'?{body:JSON.stringify(data)}:{})}));
 let x=await get();assert.equal(x.status,200);assert.equal((await x.json()).status,'ready');
 x=await get('GET',{}, {'origin':'https://evil.example','x-demo-access-code':process.env.DEMO_ACCESS_CODE});assert.equal(x.status,403);
+const previewHost='https://deploy-preview-2--ai-faq-kantah-api.netlify.app';
+x=await backend(new Request(previewHost+'/.netlify/functions/chat',{method:'GET',headers:{origin:previewHost,'x-demo-access-code':process.env.DEMO_ACCESS_CODE}}));assert.equal(x.status,200,'Same-origin preview requests should work after SSO login');
+x=await get('GET',{}, {'origin':previewHost,'x-demo-access-code':process.env.DEMO_ACCESS_CODE});assert.equal(x.status,403,'Cross-origin preview -> production must remain blocked');
 x=await get('GET',{}, {'origin':base.origin});assert.equal(x.status,401);
 x=await get('POST',{question:'a'.repeat(1600)});assert.equal(x.status,400);
 x=await get('POST',{question:'NIK 1234567890123456'});assert.equal(x.status,400);

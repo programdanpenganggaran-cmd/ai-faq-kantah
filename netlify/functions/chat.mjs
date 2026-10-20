@@ -11,7 +11,7 @@ const MODEL_DEFAULT = 'gemini-3.5-flash-lite';
 const json = (value,status=200,origin='') => new Response(JSON.stringify(value), {
   status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff',...(origin?{'access-control-allow-origin':origin,'vary':'Origin'}:{})}
 });
-function allowed(req){const origin=req.headers.get('origin')||'';const env=(process.env.ALLOWED_ORIGINS||'').split(',').map(x=>x.trim()).filter(Boolean);if(process.env.URL){try{env.push(new URL(process.env.URL).origin);}catch{}}if(!origin)return {ok:true,origin:''};return {ok:env.includes(origin),origin:env.includes(origin)?origin:''};}
+function allowed(req){const origin=req.headers.get('origin')||'';const env=(process.env.ALLOWED_ORIGINS||'').split(',').map(x=>x.trim()).filter(Boolean);if(process.env.URL){try{env.push(new URL(process.env.URL).origin);}catch{}}if(!origin)return {ok:true,origin:''};const sameOrigin=new URL(req.url).origin;const ok=origin===sameOrigin||env.includes(origin);return {ok,origin:ok?origin:''};}
 export default async (request) => {
   const a=allowed(request);if(!a.ok)return json({error:'Origin tidak diizinkan. Tambahkan origin GitHub Pages di ALLOWED_ORIGINS Netlify.'},403);
   if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{'access-control-allow-origin':a.origin||'', 'access-control-allow-methods':'GET, POST, OPTIONS','access-control-allow-headers':'content-type, x-demo-access-code','access-control-max-age':'3600','vary':'Origin'}});
