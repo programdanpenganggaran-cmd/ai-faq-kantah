@@ -2,6 +2,9 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const config = window.RUJUKAN_CONFIG || {};
+  // A protected Netlify Deploy Preview must call its own backend, not production.
+  const previewEndpoint = /^deploy-preview-\d+--ai-faq-kantah-api\.netlify\.app$/i.test(window.location.hostname)
+    ? window.location.origin+'/.netlify/functions/chat' : '';
   const localStore = (() => { try { return window.localStorage; } catch { return {getItem:()=>null,setItem:()=>{},removeItem:()=>{}}; } })();
   const sessionStore = (() => { try { return window.sessionStorage; } catch { return {getItem:()=>null,setItem:()=>{},removeItem:()=>{}}; } })();
   const KEYS = { chats: 'rujukan-v2-chats', id: 'rujukan-v2-current', endpoint:'rujukan-v2-api-url', code:'rujukan-v2-code' };
@@ -38,7 +41,7 @@
   const state = {
     chats: safeParse(localStore.getItem(KEYS.chats), []).filter(c => c && Array.isArray(c.messages)).slice(0,25),
     currentId: localStore.getItem(KEYS.id) || '',
-    api: sessionStore.getItem(KEYS.endpoint) || config.API_URL || '',
+    api: previewEndpoint || sessionStore.getItem(KEYS.endpoint) || config.API_URL || '',
     code: sessionStore.getItem(KEYS.code) || '',
     connected: false,
     pending: false,
@@ -84,10 +87,10 @@
   function addMessage(role,content,kind='',sources=[],verificationLinks=[]){const wrap=document.createElement('div');wrap.className=`message ${role}`;
     if(role==='assistant'){const avatar=document.createElement('div');avatar.className='bot-avatar';avatar.innerHTML='PP<span>.</span>';wrap.append(avatar);}
     const bubble=document.createElement('div');bubble.className='bubble';
-    if(role==='assistant'){const label=document.createElement('div');label.className='bubble-label';label.textContent='FAQ PP  /  '+(kind==='demo'?'MODE DEMO':kind==='error'?'PEMBERITAHUAN':'AI GEMINI');bubble.append(label);}
+    if(role==='assistant'){const label=document.createElement('div');label.className='bubble-label';label.textContent='FAQ PP  /  '+(kind==='demo'?'MODE OFFLINE':kind==='error'?'PEMBERITAHUAN':kind==='sources-only'?'RUJUKAN SEMENTARA':'FAQ PP');bubble.append(label);}
     const p=document.createElement('p');renderRichText(p,content);bubble.append(p);
     if(role==='assistant' && kind!=='error'){
-      const foot=document.createElement('div');foot.className='message-info'+(Array.isArray(sources)&&sources.length?' good':'');foot.textContent=kind==='demo'?'◌ Respons simulasi offline, bukan jawaban AI.':(Array.isArray(sources)&&sources.length?'✓ Materi rujukan tersedia.':'⚠ Belum berdasarkan indeks peraturan yang diverifikasi.');bubble.append(foot);
+      const foot=document.createElement('div');foot.className='message-info'+(Array.isArray(sources)&&sources.length?' good':'');foot.textContent=kind==='demo'?'◌ Respons simulasi offline, bukan jawaban AI.':kind==='sources-only'?'⚠ Kutipan sumber saja; analisis otomatis belum selesai.':(Array.isArray(sources)&&sources.length?'✓ Materi rujukan tersedia.':'⚠ Belum berdasarkan indeks peraturan yang diverifikasi.');bubble.append(foot);
     }
     if(role==='assistant' && Array.isArray(sources) && sources.length){
       const refs=document.createElement('div');refs.className='source-panel';
@@ -116,22 +119,22 @@
     }
     wrap.append(bubble);$('messages').append(wrap);return wrap;}
   function render(){renderHistory();$('messages').replaceChildren();const c=current();const has=c?.messages.length;$('welcomeArea').classList.toggle('hidden',!!has);if(has) c.messages.forEach(m=>addMessage(m.role,m.text,m.kind,m.sources,m.verificationLinks));requestAnimationFrame(()=>{ $chat.scrollTop=has?$chat.scrollHeight:0; });}
-  function status(mode){$('connectionText').textContent=mode==='online'?'AI Gemini terhubung':mode==='pending'?'Menghubungkan...':'Mode demo offline';$('statusPulse').classList.toggle('online',mode==='online');$('composerMode').textContent=mode==='online'?'AI Gemini · percakapan langsung':'Mode demo lokal';$('welcomeStatus').textContent=mode==='online'?(state.ragActive?'✦  AI online, pencarian peraturan sudah aktif.':'✦  AI online siap digunakan. Indeks peraturan belum diaktifkan.'):'◌  Mode demo offline aktif. Hubungkan Netlify pada Pengaturan untuk chat AI.';}
-  function demoAnswer(q){const t=q.toLowerCase();if(/52|53|belanja|akun/.test(t))return 'Untuk membedakan kelompok belanja 52 dan 53, periksa sifat kegiatan, klasifikasi BAS, serta apakah hasil pekerjaan memenuhi kriteria belanja modal. Ini hanya contoh respons offline. Koneksi Gemini dan indeks peraturan diperlukan sebelum aplikasi dapat memberikan analisis yang berdasar sumber.';
+  function status(mode){$('connectionText').textContent=mode==='online'?'Layanan terhubung':mode==='pending'?'Menghubungkan...':'Mode offline';$('statusPulse').classList.toggle('online',mode==='online');$('composerMode').textContent=mode==='online'?'Penelusuran peraturan · aktif':'Mode offline';$('welcomeStatus').textContent=mode==='online'?(state.ragActive?'✦  Penelusuran peraturan aktif. Jawaban tetap memerlukan pemeriksaan dasar hukum.':'✦  Layanan terhubung; indeks peraturan belum diaktifkan.'):'◌  Mode offline aktif. Periksa koneksi layanan pada Pengaturan.';}
+  function demoAnswer(q){const t=q.toLowerCase();if(/52|53|belanja|akun/.test(t))return 'Untuk membedakan kelompok belanja 52 dan 53, periksa sifat kegiatan, klasifikasi BAS, serta apakah hasil pekerjaan memenuhi kriteria belanja modal. Ini hanya contoh respons offline. Koneksi layanan dan indeks peraturan diperlukan sebelum aplikasi dapat memberikan analisis yang berdasar sumber.';
     if(/revisi|pok|dipa/.test(t))return 'Proses revisi anggaran biasanya memerlukan pemeriksaan kewenangan, pagu dan volume keluaran, dokumen pendukung, serta mekanisme pengajuan yang berlaku. Respons ini masih simulasi; belum memeriksa naskah peraturan atau kewenangan revisi yang tepat.';
     if(/sbm|sbk|biaya/.test(t))return 'Dalam penyusunan anggaran, SBM dan SBK berperan sebagai acuan biaya sesuai regulasi dan tahun anggaran terkait. Ini respons contoh. Aktifkan AI online dan basis pengetahuan yang disetujui untuk jawaban bersumber.';
     if(/peraturan|sumber|koleksi/.test(t))return 'Knowledge base masih dipersiapkan. Dokumen yang telah di-ingest belum otomatis dipublikasikan ke situs. Saat ini mode offline tidak bisa menelusuri PDF, pasal, maupun halaman sumber.';
-    return 'Pertanyaanmu sudah diterima oleh FAQ PP. Saat ini aplikasi berada di mode demo offline, sehingga jawaban ini hanya simulasi. Buka Pengaturan dan hubungkan Netlify Functions + Gemini untuk mulai mencoba percakapan AI sungguhan.';}
+    return 'Pertanyaanmu sudah diterima oleh FAQ PP. Saat ini aplikasi berada di mode demo offline, sehingga jawaban ini hanya simulasi. Buka Pengaturan dan hubungkan layanan FAQ PP untuk mulai mencoba percakapan AI sungguhan.';}
   function setPending(on){state.pending=on;$('sendButton').disabled=on;$('questionInput').disabled=on;}
-  async function requestAI(text, history, learnOptIn=false){const response=await fetch(state.api,{method:'POST',headers:{'content-type':'application/json',...(state.code?{'x-demo-access-code':state.code}:{})},body:JSON.stringify({question:text,history,learn_opt_in:learnOptIn}),signal:AbortSignal.timeout(28000)});
+  async function requestAI(text, history, learnOptIn=false){const response=await fetch(state.api,{method:'POST',headers:{'content-type':'application/json',...(state.code?{'x-demo-access-code':state.code}:{})},body:JSON.stringify({question:text,history,learn_opt_in:learnOptIn}),signal:AbortSignal.timeout(50000)});
     let data;try{data=await response.json();}catch{throw new Error('Server tidak mengembalikan JSON yang valid. Periksa URL fungsi Netlify.');}
-    if(!response.ok)throw new Error(data.error||`Permintaan ditolak (HTTP ${response.status})`);if(typeof data.reply!=='string'||!data.reply.trim())throw new Error('AI tidak memberikan jawaban teks.');return data;}
+    if(!response.ok)throw new Error(data.error||`Permintaan ditolak (HTTP ${response.status})`);if(typeof data.reply!=='string'||!data.reply.trim())throw new Error('Layanan tidak memberikan jawaban teks.');return data;}
   async function send(text){const q=text.trim();if(!q||state.pending)return;let c=current();if(!c){newChat(true);c=current();}const previous=c.messages.slice(-10).map(m=>({role:m.role==='assistant'?'model':'user',text:m.text}));if(!c.messages.length)c.title=q.slice(0,66);c.messages.push({role:'user',text:q});c.updated=now();persist();$('questionInput').value='';resizeTextarea();render();setPending(true);
     const holder=addMessage('assistant','',state.connected?'online':'demo');const p=holder.querySelector('p');p.innerHTML='<span class="loading-dots" aria-label="Menyiapkan jawaban"><span></span><span></span><span></span></span>';
     $chat.scrollTop=$chat.scrollHeight;
     try { const output=state.connected?await requestAI(q,previous,state.captureEnabled&&$('learnOptIn')?.checked===true):{reply:demoAnswer(q),sources:[],verification_links:[],grounded:false};
-      c.messages.push({role:'assistant',text:output.reply,kind:state.connected?'online':'demo',sources:Array.isArray(output.sources)?output.sources:[],verificationLinks:Array.isArray(output.verification_links)?output.verification_links:[]}); }
-    catch(e){c.messages.push({role:'assistant',text:e?.name==='TimeoutError'?'Waktu permintaan habis. Coba lagi.':(e.message||'Terjadi kesalahan koneksi.'),kind:'error',sources:[]});}
+      c.messages.push({role:'assistant',text:output.reply,kind:!state.connected?'demo':output.mode==='sources-only'?'sources-only':'online',sources:Array.isArray(output.sources)?output.sources:[],verificationLinks:Array.isArray(output.verification_links)?output.verification_links:[]}); }
+    catch(e){c.messages.push({role:'assistant',text:e?.name==='TimeoutError'?'Koneksi menunggu terlalu lama. Coba pertanyaan lebih singkat atau ulangi nanti.':(e.message||'Terjadi kesalahan koneksi.'),kind:'error',sources:[]});}
     finally{c.updated=now();persist();setPending(false);render();$('questionInput').focus();}
   }
   function resizeTextarea(){$('questionInput').style.height='auto';$('questionInput').style.height=Math.min($('questionInput').scrollHeight,125)+'px';$('charCounter').textContent=$('questionInput').value.length+'/1500';}
@@ -142,7 +145,7 @@
     state.captureEnabled=info.faq_capture_enabled===true;
     if($('learnConsentWrap'))$('learnConsentWrap').hidden=!state.captureEnabled;
     if(!state.captureEnabled&&$('learnOptIn'))$('learnOptIn').checked=false;
-    state.connected=true;status('online');if(!silent)feedback('Koneksi berhasil! Gemini siap digunakan.','success');}catch(e){state.connected=false;status('offline');if(!silent)feedback(e.message,'error');}}
+    state.connected=true;status('online');if(!silent)feedback('Koneksi layanan berhasil. Pencarian peraturan siap digunakan.','success');}catch(e){state.connected=false;status('offline');if(!silent)feedback(e.message,'error');}}
   function feedback(text,type=''){const f=$('settingsFeedback');f.className='feedback '+type;f.textContent=text;}
   function openSettings(){$('apiUrl').value=state.api;$('accessCode').value=state.code;feedback('');$('settingsModal').classList.remove('hidden');$('apiUrl').focus();}
   function closeSettings(){$('settingsModal').classList.add('hidden');}
@@ -173,8 +176,8 @@
   document.querySelectorAll('.category').forEach(x=>x.addEventListener('click',()=>setCategory(x.dataset.topic)));
   document.querySelectorAll('.suggestion-card').forEach(x=>x.addEventListener('click',()=>send(x.dataset.question)));
   $('openSettings').addEventListener('click',openSettings);$('closeSettings').addEventListener('click',closeSettings);$('settingsModal').addEventListener('click',e=>{if(e.target===$('settingsModal'))closeSettings();});
-  $('testConnection').addEventListener('click',async()=>{feedback('Memeriksa server Netlify...');try{const result=await checkConnection($('apiUrl').value.trim(), $('accessCode').value.trim());feedback('Terhubung ke '+(result.model||'Gemini')+'.','success');}catch(e){feedback(e.message,'error');}});
-  $('saveSettings').addEventListener('click',async()=>{const url=$('apiUrl').value.trim(),code=$('accessCode').value.trim();if(url&&!safeHttpUrl(url)){feedback('Format URL Netlify tidak valid.','error');return;}state.api=url;state.code=code;if(url)sessionStore.setItem(KEYS.endpoint,url);else sessionStore.removeItem(KEYS.endpoint);if(code)sessionStore.setItem(KEYS.code,code);else sessionStore.removeItem(KEYS.code);await connect();if(state.connected||!url){closeSettings();}});
+  $('testConnection').addEventListener('click',async()=>{feedback('Memeriksa server Netlify...');try{const result=await checkConnection(previewEndpoint||$('apiUrl').value.trim(), $('accessCode').value.trim());feedback('Koneksi FAQ PP berhasil.','success');}catch(e){feedback(e.message,'error');}});
+  $('saveSettings').addEventListener('click',async()=>{const url=previewEndpoint||$('apiUrl').value.trim(),code=$('accessCode').value.trim();if(url&&!safeHttpUrl(url)){feedback('Format URL Netlify tidak valid.','error');return;}state.api=url;state.code=code;if(url)sessionStore.setItem(KEYS.endpoint,url);else sessionStore.removeItem(KEYS.endpoint);if(code)sessionStore.setItem(KEYS.code,code);else sessionStore.removeItem(KEYS.code);await connect();if(state.connected||!url){closeSettings();}});
   $('chatForm').addEventListener('submit',e=>{e.preventDefault();send($('questionInput').value);});$('questionInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('chatForm').requestSubmit();}});$('questionInput').addEventListener('input',resizeTextarea);
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSettings();closeMenu();}if(e.altKey&&e.key.toLowerCase()==='n'){e.preventDefault();newChat();}});
   if(!current())newChat(true);else render();resizeTextarea();connect(true);
