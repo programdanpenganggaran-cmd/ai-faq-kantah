@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop/faq-pp-rag-5c
+      - main
   pull_request:
     branches:
       - main
