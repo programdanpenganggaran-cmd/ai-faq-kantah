@@ -23,7 +23,7 @@ const prior={observations:[],related_untracked:[]};
 const a=buildObservations(prior,[extracted],[entry],'2026-10-19T01:00:00Z');
 assert.equal(a.updated,true);
 assert.equal(a.changes.length,1);
-assert.deepEqual(a.related_untracked,['PMK-107-2024','PMK-41-2026']);
+assert.deepEqual(a.candidates,['PMK-107-2024','PMK-41-2026']);
 const b=buildObservations(a.next,[extracted],[entry],'2026-10-26T01:00:00Z');
 assert.equal(b.updated,false);
 assert.deepEqual(b.changes,[]);
