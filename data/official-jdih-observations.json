@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "source": "JDIH Kemenkeu (public metadata; not a legal-status determination)",
+  "observations": [
+    {
+      "id": "PMK-41-2026",
+      "title": "PMK 41 TAHUN 2026 - Perubahan Kedua atas Peraturan Menteri Keuangan Nomor 62 Tahun 2023 tentang Perencanaan Anggaran, Pelaksanaan Anggaran, serta Akuntansi dan Pelaporan Keuangan | JDIH Kementerian Keuangan",
+      "url": "https://jdih.kemenkeu.go.id/dok/pmk-41-tahun-2026",
+      "topic": "Perubahan kedua PMK 62/2023",
+      "effective_text": "22 Jun 2026 - s.d. Dicabut",
+      "history_count": 2,
+      "history_related_ids": [
+        "PMK-107-2024",
+        "PMK-62-2023"
+      ],
+      "metadata_signature": "babf4dd98780826034bcb61d",
+      "legal_status": "NOT_AUTOMATICALLY_VERIFIED",
+      "first_observed": "2026-10-26T07:54:53.544Z",
+      "changed_at": "2026-10-26T07:54:53.544Z"
+    },
+    {
+      "id": "PMK-54-2026",
+      "title": "PMK 54 TAHUN 2026 - Standar Biaya Masukan | JDIH Kementerian Keuangan",
+      "url": "https://jdih.kemenkeu.go.id/dok/pmk-54-tahun-2026",
+      "topic": "Standar Biaya Masukan",
+      "effective_text": "31 Jul 2026 - s.d. Dicabut",
+      "history_count": 0,
+      "history_related_ids": [],
+      "metadata_signature": "14de8c7ae1026a0075a0eddd",
+      "legal_status": "NOT_AUTOMATICALLY_VERIFIED",
+      "first_observed": "2026-10-26T07:54:53.544Z",
+      "changed_at": "2026-10-26T07:54:53.544Z"
+    },
+    {
+      "id": "PMK-62-2023",
+      "title": "PMK 62 TAHUN 2023 - Perencanaan Anggaran, Pelaksanaan Anggaran, serta Akuntansi dan Pelaporan Keuangan | JDIH Kementerian Keuangan",
+      "url": "https://jdih.kemenkeu.go.id/dok/pmk-62-tahun-2023",
+      "topic": "Perencanaan dan pelaksanaan anggaran",
+      "effective_text": "23 Jun 2023 - s.d. Dicabut",
+      "history_count": 21,
+      "history_related_ids": [
+        "PMK-107-2024",
+        "PMK-41-2026"
+      ],
+      "metadata_signature": "28cdf2267ef7ced0958a3b97",
+      "legal_status": "NOT_AUTOMATICALLY_VERIFIED",
+      "first_observed": "2026-10-26T07:54:53.544Z",
+      "changed_at": "2026-10-26T07:54:53.544Z"
+    },
+    {
+      "id": "PMK-63-2026",
+      "title": "PMK 63 TAHUN 2026 - Perubahan atas Peraturan Menteri Keuangan Nomor 98 Tahun 2024 tentang Jenis dan Tarif atas Jenis Penerimaan Negara Bukan Pajak yang Bersifat Volatil yang Berlaku pada Kementerian Agraria dan Tata Ruang/Badan Pertanahan Nasional | JDIH Kementerian Keuangan",
+      "url": "https://jdih.kemenkeu.go.id/dok/pmk-63-tahun-2026",
+      "topic": "Perubahan PNBP volatil ATR/BPN",
+      "effective_text": "05 Sep 2026 - s.d. Dicabut",
+      "history_count": 1,
+      "history_related_ids": [
+        "PMK-98-2024"
+      ],
+      "metadata_signature": "7ea449e9fcf22a205e42406c",
+      "legal_status": "NOT_AUTOMATICALLY_VERIFIED",
+      "first_observed": "2026-10-26T07:54:53.544Z",
+      "changed_at": "2026-10-26T07:54:53.544Z"
+    },
+    {
+      "id": "PMK-98-2024",
+      "title": "PMK 98 TAHUN 2024 - Jenis dan Tarif atas Jenis Penerimaan Negara Bukan Pajak yang Bersifat Volatil yang Berlaku pada Kementerian Agraria dan Tata Ruang/Badan Pertanahan Nasional | JDIH Kementerian Keuangan",
+      "url": "https://jdih.kemenkeu.go.id/dok/pmk-98-tahun-2024",
+      "topic": "PNBP volatil ATR/BPN",
+      "effective_text": "01 Jan 2025 - s.d. Dicabut",
+      "history_count": 1,
+      "history_related_ids": [
+        "PMK-63-2026"
+      ],
+      "metadata_signature": "ff78b45f0eb56ef88760dcc7",
+      "legal_status": "NOT_AUTOMATICALLY_VERIFIED",
+      "first_observed": "2026-10-26T07:54:53.544Z",
+      "changed_at": "2026-10-26T07:54:53.544Z"
+    }
+  ],
+  "related_untracked": [
+    "PMK-107-2024"
+  ]
+}
